@@ -1,0 +1,44 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+
+---
+
+# StudyDash
+
+学生向け学習ダッシュボード。仕様は `student_dashboard_spec_v0.1.docx`（§ 参照は仕様書の節番号）。
+セットアップと設計の要点は README.md を参照。
+
+## 進め方
+
+仕様書 §13 のフェーズ単位で実装する。各フェーズで「実装 → テスト → 動作確認 → コミット」を
+完了してから次へ進む。**指示なく次のフェーズへ進まないこと。**
+
+現在 Phase 1（基盤・Auth・DB・RLS・基本レイアウト）まで完了。
+
+## 守るべきルール（§14.1）
+
+- `any` を安易に使わない
+- 秘密鍵をクライアントへ埋め込まない。`SUPABASE_SERVICE_ROLE_KEY` は
+  `src/lib/supabase/admin.ts` からのみ使う
+- `.env.example` を更新し、実値はコミットしない
+- スキーマ変更は `supabase/migrations/` にマイグレーションを追加し、
+  `src/types/database.ts` も合わせて更新する
+- 主要なビジネスロジックにはテストを付ける（`npm test`）
+- 画面追加時はモバイル幅（390px）を先に確認する。横スクロールを出さない（A-08）
+- **Pro 判定は `src/lib/entitlements.ts` だけに書く。**
+  画面側で `plan === "pro"` のような比較を書かない
+
+## データアクセス
+
+- 新しいテーブルは必ず `user_id` で所有者を紐付け、RLS を有効化する（§9）
+- 権限判定の材料は `subscriptions.entitlement` のみ。`profiles.plan` は表示用キャッシュ
+- Server Component / Server Action からは `src/lib/supabase/server.ts` の
+  `createClient()` をリクエストごとに生成して使う
+
