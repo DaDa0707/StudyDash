@@ -1,34 +1,33 @@
 import type { Metadata } from "next";
 
 import { HomeAssignmentsCard } from "@/components/assignments/home-assignments-card";
-import { PhaseNotice } from "@/components/phase-notice";
+import { HomeStudyCard } from "@/components/timer/home-study-card";
 import { HomeTodosCard } from "@/components/todos/home-todos-card";
 import { NextClassCard } from "@/components/timetable/next-class-card";
 import { formatToday, greetingFor } from "@/lib/date";
+import { startOfThisWeek, startOfToday } from "@/lib/deadline";
 import { checkQuota, isPro } from "@/lib/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { listAssignments, listTodos } from "@/lib/queries/assignments";
+import { getRunningSession, listStudySessions } from "@/lib/queries/study";
 import { listClassSessions, listSubjects } from "@/lib/queries/timetable";
 import { createClient } from "@/lib/supabase/server";
+import { inRange, totalSeconds } from "@/lib/study-stats";
 import { countOpen } from "@/lib/todos";
 
 export const metadata: Metadata = { title: "ホーム" };
 
-/** §4.2 のカード順のうち、後続フェーズで埋める枠 */
-const PENDING_CARDS = [
-  { phase: 4, title: "勉強タイマー", description: "科目を選んですぐ開始できるボタンを置きます。" },
-  { phase: 4, title: "勉強時間", description: "今日の合計と今週の合計を表示します。" },
-] as const;
-
 export default async function HomePage() {
-  const [supabase, sessions, subjects, assignments, todos, entitlement] = await Promise.all([
-    createClient(),
-    listClassSessions(),
-    listSubjects(),
-    listAssignments(),
-    listTodos(),
-    getEntitlement(),
-  ]);
+  const [supabase, sessions, subjects, assignments, todos, entitlement, running] =
+    await Promise.all([
+      createClient(),
+      listClassSessions(),
+      listSubjects(),
+      listAssignments(),
+      listTodos(),
+      getEntitlement(),
+      getRunningSession(),
+    ]);
 
   const {
     data: { user },
@@ -43,6 +42,10 @@ export default async function HomePage() {
   const timezone = profile?.timezone ?? "Asia/Tokyo";
   const now = new Date();
   const todoQuota = checkQuota(entitlement, "openTodos", countOpen(todos));
+
+  const history = await listStudySessions(entitlement, now, timezone);
+  const todayTotal = totalSeconds(inRange(history, startOfToday(now, timezone), now));
+  const weekTotal = totalSeconds(inRange(history, startOfThisWeek(now, timezone), now));
 
   return (
     <div className="space-y-5">
@@ -72,11 +75,24 @@ export default async function HomePage() {
         canAdd={todoQuota.allowed}
       />
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        {PENDING_CARDS.map((card) => (
-          <PhaseNotice key={card.title} {...card} />
-        ))}
-      </div>
+      <HomeStudyCard
+        now={now}
+        todayTotal={todayTotal}
+        weekTotal={weekTotal}
+        running={
+          running
+            ? {
+                started_at: running.started_at,
+                ended_at: running.ended_at,
+                duration_sec: running.duration_sec,
+                segment_started_at: running.segment_started_at,
+                accumulated_sec: running.accumulated_sec,
+                subjectName: running.subject?.name ?? null,
+                subjectColor: running.subject?.color ?? null,
+              }
+            : null
+        }
+      />
     </div>
   );
 }

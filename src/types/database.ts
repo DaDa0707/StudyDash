@@ -1,6 +1,6 @@
 /**
- * supabase/migrations/0001_init.sql に対応する型定義。
- * マイグレーションを変更したら、この定義も合わせて更新すること。
+ * supabase/migrations/ 配下のスキーマに対応する型定義。
+ * マイグレーションを追加したら、この定義も合わせて更新すること。
  */
 
 export type SchoolType = "junior_high" | "high_school" | "university" | "other";
@@ -86,9 +86,13 @@ export type StudySession = {
   user_id: string;
   subject_id: string | null;
   started_at: string;
-  /** null なら実行中のタイマー */
+  /** null なら実行中のタイマー（計測中または一時停止中） */
   ended_at: string | null;
   duration_sec: number | null;
+  /** 計測中の区間の開始時刻。一時停止中と終了後は null */
+  segment_started_at: string | null;
+  /** 一時停止までに確定した合計秒数 */
+  accumulated_sec: number;
   created_at: string;
   updated_at: string;
 }
@@ -163,7 +167,16 @@ export type Database = {
       >;
       study_sessions: TableDef<
         StudySession,
-        Insert<StudySession, Generated | "subject_id" | "started_at" | "ended_at" | "duration_sec">,
+        Insert<
+          StudySession,
+          | Generated
+          | "subject_id"
+          | "started_at"
+          | "ended_at"
+          | "duration_sec"
+          | "segment_started_at"
+          | "accumulated_sec"
+        >,
         Partial<StudySession>
       >;
       notification_settings: TableDef<

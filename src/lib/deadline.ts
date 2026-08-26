@@ -146,6 +146,24 @@ export function endOfToday(now: Date, timeZone: string): Date {
   return end ? new Date(end.getTime() + 59_999) : now;
 }
 
+/** その日の始まり（00:00）を指す瞬間 */
+export function startOfToday(now: Date, timeZone: string): Date {
+  return zonedToUtc(zonedDateKey(now, timeZone), "00:00", timeZone) ?? now;
+}
+
+/** 今週の始まり（月曜の 00:00）を指す瞬間。週は月曜始まり（ISO-8601 準拠）。 */
+export function startOfThisWeek(now: Date, timeZone: string): Date {
+  const daysSinceMonday = isoWeekday(now, timeZone) - 1;
+  const start = startOfToday(now, timeZone);
+  return new Date(start.getTime() - daysSinceMonday * MS_PER_DAY);
+}
+
+/** N 日前の 00:00 を指す瞬間（学習履歴の下限に使う） */
+export function startOfDaysAgo(now: Date, timeZone: string, days: number): Date {
+  const start = startOfToday(now, timeZone);
+  return new Date(start.getTime() - days * MS_PER_DAY);
+}
+
 /**
  * 今週の終わり（日曜の 23:59:59.999）を指す瞬間。
  * 週は月曜始まりとする（ISO-8601 準拠、時間割の曜日と揃える）。
