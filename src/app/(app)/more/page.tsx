@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, ChevronRight, Settings, Sparkles } from "lucide-react";
+import { BarChart3, BookOpen, ChevronRight, ListChecks, NotebookPen, Settings, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -11,6 +11,8 @@ export default async function MorePage() {
   const entitlement = await getEntitlement();
 
   const links = [
+    { href: "/assignments", label: "課題", icon: NotebookPen, note: undefined },
+    { href: "/todos", label: "Todo", icon: ListChecks, note: undefined },
     { href: "/subjects", label: "科目", icon: BookOpen, note: undefined },
     { href: "/analytics", label: "分析", icon: BarChart3, note: "Phase 4" },
     { href: "/pro", label: "Pro", icon: Sparkles, note: isPro(entitlement) ? "利用中" : "Phase 5" },
@@ -23,7 +25,7 @@ export default async function MorePage() {
 
       <ul className="divide-y overflow-hidden rounded-xl ring-1 ring-foreground/10">
         {links.map(({ href, label, icon: Icon, note }) => {
-          const isReady = href === "/settings" || href === "/subjects";
+          const isReady = !note;
           const content = (
             <>
               <Icon className="size-5 text-muted-foreground" aria-hidden />

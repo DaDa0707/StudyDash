@@ -1,10 +1,9 @@
 "use client";
 
-import { CalendarDays, House, MoreHorizontal, Plus, Timer } from "lucide-react";
+import { CalendarDays, House, MoreHorizontal, Timer } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { toast } from "sonner";
-
+import { QuickAdd } from "@/components/nav/quick-add";
 import { cn } from "@/lib/utils";
 
 /** §11 下部ナビ。主要操作を片手で届く位置に置く。 */
@@ -37,18 +36,7 @@ export function BottomNav() {
         ))}
 
         <li className="flex flex-1 items-center justify-center">
-          <button
-            type="button"
-            aria-label="課題やTodoを追加"
-            onClick={() =>
-              toast("クイック追加はPhase 3で実装します", {
-                description: "課題・Todoのフォームを追加予定です。",
-              })
-            }
-            className="-mt-4 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            <Plus className="size-6" aria-hidden />
-          </button>
+          <QuickAdd />
         </li>
 
         {right.map((item) => (

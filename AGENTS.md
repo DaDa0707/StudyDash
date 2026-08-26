@@ -20,7 +20,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 仕様書 §13 のフェーズ単位で実装する。各フェーズで「実装 → テスト → 動作確認 → コミット」を
 完了してから次へ進む。**指示なく次のフェーズへ進まないこと。**
 
-現在 Phase 2（時間割・科目）まで完了。
+現在 Phase 3（課題・Todo）まで完了。
 
 ## 守るべきルール（§14.1）
 
@@ -36,6 +36,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   画面側で `plan === "pro"` のような比較を書かない
 - 時間割の計算（次の授業・重複判定）は `src/lib/timetable.ts` に置く。
   曜日は 1=月 … 7=日（ISO-8601 準拠）で統一する
+- 日付・締切の計算は `src/lib/deadline.ts` に置く。
+  「今日」「明日」はユーザーのタイムゾーンでの暦日で判定する（経過時間ではない）
+- Free 上限は必ず Server Action の中でも確認する。画面側の非表示だけに頼らない
 
 ## データアクセス
 
