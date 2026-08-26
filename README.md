@@ -6,21 +6,21 @@
 
 ---
 
-## 現在の進捗：Phase 1 完了
+## 現在の進捗：Phase 2 完了
 
 仕様書 §13 のフェーズ区分に沿って、Phase 単位で実装する。
 
 | Phase | 範囲 | 状態 |
 | --- | --- | --- |
 | 1 | プロジェクト基盤・Auth・DB・RLS・基本レイアウト | ✅ 完了 |
-| 2 | 時間割・科目（CRUD + 次の授業表示） | 未着手 |
+| 2 | 時間割・科目（CRUD + 次の授業表示） | ✅ 完了 |
 | 3 | 課題・Todo（CRUD + ホーム集約） | 未着手 |
 | 4 | タイマー・履歴（記録保存 + 今日/今週集計） | 未着手 |
 | 5 | Pro 権限・課金（Free 上限 + entitlement 判定） | 未着手 |
 | 6 | 通知・PWA・仕上げ | 未着手 |
 | 7 | 公開・計測 | 未着手 |
 
-Phase 2 以降で実装する画面には、アプリ内に「Phase N」のプレースホルダを表示している。
+Phase 3 以降で実装する画面には、アプリ内に「Phase N」のプレースホルダを表示している。
 
 ---
 
@@ -133,7 +133,15 @@ UI 側の非表示だけに頼らない。
 ### 時間割の重複（§5.1）
 
 同一曜日・同一時限の重複登録は「警告するが保存は許可する」ため、`class_sessions` に一意制約を張っていない。
-重複検出は UI 側で行う。
+重複検出は `findSlotConflicts()` で行い、フォーム上で警告だけ出して保存はそのまま通す。
+
+### 「次の授業」の判定（§5.1）
+
+[`src/lib/timetable.ts`](src/lib/timetable.ts) の `findCurrentOrNextClass()` に集約している。
+時間割は週次で繰り返すため、週をまたいで巡回して最も近い開始時刻を探す。
+授業中はその授業を `inProgress: true` で返し、ホームでは「今の授業」として表示する。
+
+曜日は ISO-8601 準拠で 1=月 … 7=日。判定はユーザーのタイムゾーンで行う。
 
 ---
 
@@ -143,6 +151,8 @@ UI 側の非表示だけに頼らない。
 src/
   app/
     (app)/            ログイン後の画面。下部ナビ付きシェル
+      timetable/      S-04 週表示・授業の追加/編集
+      subjects/       科目の一覧・追加/編集
     (auth)/           ログイン・登録・パスワード再設定
     auth/             メールリンクの着地点、ログアウト
     onboarding/       S-01 初回設定
@@ -152,8 +162,10 @@ src/
     theme/            ライト/ダーク切り替え（F-09）
   lib/
     actions/          Server Actions
+    queries/          Server Component からの読み取り
     supabase/         クライアント生成（browser / server / admin / proxy）
     entitlements.ts   Free/Pro 判定（唯一の実装）
+    timetable.ts      次の授業・重複判定（純粋関数）
   types/database.ts   DB スキーマの型
 supabase/migrations/  スキーマと RLS
 ```

@@ -8,6 +8,7 @@ import type { Database } from "@/types/database";
 const PROTECTED_PREFIXES = [
   "/home",
   "/timetable",
+  "/subjects",
   "/assignments",
   "/todos",
   "/timer",

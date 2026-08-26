@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
 
 import { PhaseNotice } from "@/components/phase-notice";
-import { createClient } from "@/lib/supabase/server";
-import { getEntitlement } from "@/lib/entitlements.server";
-import { isPro } from "@/lib/entitlements";
+import { NextClassCard } from "@/components/timetable/next-class-card";
 import { formatToday, greetingFor } from "@/lib/date";
+import { isPro } from "@/lib/entitlements";
+import { getEntitlement } from "@/lib/entitlements.server";
+import { listClassSessions, listSubjects } from "@/lib/queries/timetable";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "ホーム" };
 
-/** §4.2 のカード順に、後続フェーズで埋める枠を並べる */
-const CARDS = [
-  {
-    phase: 2,
-    title: "次の授業",
-    description: "時間割を登録すると、現在時刻以降で最も近い授業をここに表示します。",
-  },
+/** §4.2 のカード順のうち、後続フェーズで埋める枠 */
+const PENDING_CARDS = [
   {
     phase: 3,
     title: "締切が近い課題",
@@ -26,7 +23,12 @@ const CARDS = [
 ] as const;
 
 export default async function HomePage() {
-  const supabase = await createClient();
+  const [supabase, sessions, subjects, entitlement] = await Promise.all([
+    createClient(),
+    listClassSessions(),
+    listSubjects(),
+    getEntitlement(),
+  ]);
 
   const {
     data: { user },
@@ -38,7 +40,6 @@ export default async function HomePage() {
     .eq("id", user!.id)
     .single();
 
-  const entitlement = await getEntitlement();
   const timezone = profile?.timezone ?? "Asia/Tokyo";
   const now = new Date();
 
@@ -54,8 +55,15 @@ export default async function HomePage() {
         </p>
       </header>
 
+      <NextClassCard
+        sessions={sessions}
+        now={now}
+        timezone={timezone}
+        hasSubjects={subjects.length > 0}
+      />
+
       <div className="grid gap-3 sm:grid-cols-2">
-        {CARDS.map((card) => (
+        {PENDING_CARDS.map((card) => (
           <PhaseNotice key={card.title} {...card} />
         ))}
       </div>
