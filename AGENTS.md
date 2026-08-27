@@ -20,7 +20,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 仕様書 §13 のフェーズ単位で実装する。各フェーズで「実装 → テスト → 動作確認 → コミット」を
 完了してから次へ進む。**指示なく次のフェーズへ進まないこと。**
 
-現在 Phase 6（通知・PWA・仕上げ）まで完了。
+現在 Phase 6（通知・PWA・仕上げ）まで完了。実装は §12 A-01〜A-10 を一通り満たす想定だが、
+**Supabase に接続しての受け入れ確認は未実施**。手順は `docs/acceptance.md`、
+DB 層の自動検証は `npm run verify:db`。
 
 ## 守るべきルール（§14.1）
 

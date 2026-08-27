@@ -62,7 +62,10 @@ cp .env.example .env.local
 
 ### 3. マイグレーションを適用する
 
-Supabase ダッシュボードの **SQL Editor** に `supabase/migrations/0001_init.sql` の内容を貼って実行する。
+Supabase ダッシュボードの **SQL Editor** で、次の順に実行する。
+
+1. `supabase/migrations/0001_init.sql`
+2. `supabase/migrations/0002_study_session_pause.sql`
 
 Supabase CLI を使う場合：
 
@@ -116,6 +119,10 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 | `npm test` | Vitest 実行 |
 | `npm run typecheck` | 型チェック |
 | `npm run lint` | ESLint |
+| `npm run verify:db` | DB 層の受け入れ条件を検証（A-01 / A-07 / A-09 / A-10） |
+| `npm run icons` | PWA アイコンを再生成 |
+
+受け入れ確認の手順は [docs/acceptance.md](docs/acceptance.md) を参照。
 
 ---
 
