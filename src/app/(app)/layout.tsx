@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 
 import { BottomNav } from "@/components/nav/bottom-nav";
+import { SetupRequired } from "@/components/setup-required";
 import { InAppNotice } from "@/components/notifications/in-app-notice";
 import { zonedDateKey } from "@/lib/deadline";
+import { isSupabaseConfigured } from "@/lib/env";
 import { dueBuckets, shouldNotify } from "@/lib/notifications";
 import { listAssignments } from "@/lib/queries/assignments";
 import { createClient } from "@/lib/supabase/server";
@@ -12,6 +14,9 @@ import { createClient } from "@/lib/supabase/server";
  * 認証チェックは proxy でも行うが、データ取得の前提としてここでも確認する。
  */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
+  // 未設定のまま開くと環境変数の読み出しで落ちるため、先に案内を出す（開発時のみ）
+  if (!isSupabaseConfigured) return <SetupRequired />;
+
   const supabase = await createClient();
 
   const {

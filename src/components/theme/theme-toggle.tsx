@@ -12,9 +12,10 @@ const isClient = () => true;
 const isServer = () => false;
 
 const OPTIONS = [
-  { value: "light", label: "ライト", icon: Sun },
-  { value: "dark", label: "ダーク", icon: Moon },
-  { value: "system", label: "端末に合わせる", icon: Monitor },
+  // label は読み上げ用、shortLabel は表示用（折り返さない長さに保つ）
+  { value: "light", label: "ライト", shortLabel: "ライト", icon: Sun },
+  { value: "dark", label: "ダーク", shortLabel: "ダーク", icon: Moon },
+  { value: "system", label: "端末に合わせる", shortLabel: "自動", icon: Monitor },
 ] as const;
 
 /**
@@ -34,7 +35,7 @@ export function ThemeToggle() {
       aria-label="テーマ"
       className="inline-flex rounded-lg bg-muted p-1"
     >
-      {OPTIONS.map(({ value, label, icon: Icon }) => {
+      {OPTIONS.map(({ value, label, shortLabel, icon: Icon }) => {
         const selected = mounted && theme === value;
         return (
           <button
@@ -54,7 +55,7 @@ export function ThemeToggle() {
             )}
           >
             <Icon className="size-4 shrink-0" aria-hidden />
-            <span className="hidden sm:inline">{label}</span>
+            <span className="hidden whitespace-nowrap sm:inline">{shortLabel}</span>
           </button>
         );
       })}
