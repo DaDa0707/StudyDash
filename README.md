@@ -6,7 +6,7 @@
 
 ---
 
-## 現在の進捗：Phase 6 完了
+## 現在の進捗：Phase 7 完了（MVP 実装完了）
 
 仕様書 §13 のフェーズ区分に沿って、Phase 単位で実装する。
 
@@ -18,9 +18,11 @@
 | 4 | タイマー・履歴（記録保存 + 今日/今週集計） | ✅ 完了 |
 | 5 | Pro 権限・課金（Free 上限 + entitlement 判定） | ✅ 完了 |
 | 6 | 通知・PWA・仕上げ | ✅ 完了 |
-| 7 | 公開・計測 | 未着手 |
+| 7 | 公開・計測 | ✅ 実装完了（デプロイは未実施） |
 
-MVP（§12 A-01〜A-10）の実装は一通り揃った。残るは Phase 7（公開・計測）。
+MVP（§12 A-01〜A-10）の実装は完了し、**実際の Supabase に接続して全条件を確認済み**
+（[docs/acceptance.md](docs/acceptance.md)）。本番へのデプロイ手順は
+[docs/deploy.md](docs/deploy.md)。
 
 ---
 
@@ -120,6 +122,7 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 | `npm run typecheck` | 型チェック |
 | `npm run lint` | ESLint |
 | `npm run verify:db` | DB 層の受け入れ条件を検証（A-01 / A-07 / A-09 / A-10） |
+| `npm run migrate` | `supabase/migrations/` を順に適用（`-- --dry` で確認のみ） |
 | `npm run icons` | PWA アイコンを再生成 |
 
 受け入れ確認の手順は [docs/acceptance.md](docs/acceptance.md) を参照。
@@ -194,6 +197,19 @@ UI 側の非表示だけに頼らない。
 日付のみで登録された締切（`due_all_day`）は、その日の 23:59 を指す瞬間として保存する。
 これにより期限切れ判定は `now > due_at` の一本で済む。
 
+### 利用計測（§7）
+
+`NEXT_PUBLIC_POSTHOG_KEY` を設定したときだけ有効になる。未設定なら何も送らない。
+
+送れるイベントは [`src/lib/analytics.ts`](src/lib/analytics.ts) の `ANALYTICS_EVENTS` に
+列挙したものだけ。**課題のタイトルや Todo の内容は送らない** — `sanitizeProperties()` が
+あらかじめ決めた語彙以外の文字列を機械的に落とす（§9）。
+
+### フィードバック（§13 Phase 7）
+
+「その他 → ご意見・ご要望」から `feedback` テーブルに入る。外部サービスは使わない。
+本人は自分の分だけ読め、送信後は**本人でも書き換え・削除できない**。
+
 ### PWA（§1）
 
 - マニフェストは [`src/app/manifest.ts`](src/app/manifest.ts)（`/manifest.webmanifest` として配信）
@@ -267,6 +283,7 @@ src/
       analytics/      S-08 分析・学習履歴
       pro/            S-10 機能比較・購入/管理
       settings/       テーマ・通知・アカウント削除
+      feedback/       ご意見・ご要望
     api/stripe/       Stripe Webhook（署名検証）
     (auth)/           ログイン・登録・パスワード再設定
     auth/             メールリンクの着地点、ログアウト
@@ -288,6 +305,7 @@ src/
     study-stats.ts    学習履歴の集計（純粋関数）
     billing.ts        課金状態から権限を導く（純粋関数）
     notifications.ts  通知タイミング・静かな時間帯（純粋関数）
+    analytics.ts      計測イベントの定義と絞り込み（純粋関数）
     stripe/           Stripe クライアント・価格取得・同期
   types/database.ts   DB スキーマの型
 supabase/migrations/  スキーマと RLS

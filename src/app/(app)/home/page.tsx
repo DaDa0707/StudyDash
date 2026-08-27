@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { TrackOnMount } from "@/components/analytics/track-on-mount";
 import { HomeAssignmentsCard } from "@/components/assignments/home-assignments-card";
 import { HomeStudyCard } from "@/components/timer/home-study-card";
 import { HomeTodosCard } from "@/components/todos/home-todos-card";
@@ -17,7 +18,11 @@ import { countOpen } from "@/lib/todos";
 
 export const metadata: Metadata = { title: "ホーム" };
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: PageProps<"/home">) {
+  const params = await searchParams;
+  const justOnboarded =
+    (Array.isArray(params.welcome) ? params.welcome[0] : params.welcome) === "1";
+
   const [supabase, sessions, subjects, assignments, todos, entitlement, running] =
     await Promise.all([
       createClient(),
@@ -49,6 +54,8 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-5">
+      {justOnboarded ? <TrackOnMount event="onboarding_completed" /> : null}
+
       <header>
         <p className="text-sm text-muted-foreground">{formatToday(now, timezone)}</p>
         <h1 className="mt-1 text-2xl font-bold tracking-tight">

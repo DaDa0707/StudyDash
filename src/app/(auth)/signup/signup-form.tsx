@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 
+import { TrackOnMount } from "@/components/analytics/track-on-mount";
+
 import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
@@ -13,7 +15,12 @@ export function SignUpForm() {
 
   // 確認メール送信後はフォームを畳み、次の操作を案内するだけにする。
   if (state.status === "success") {
-    return <FormMessage state={state} />;
+    return (
+      <>
+        <TrackOnMount event="signed_up" />
+        <FormMessage state={state} />
+      </>
+    );
   }
 
   return (

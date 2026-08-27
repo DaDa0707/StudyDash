@@ -4,6 +4,7 @@ import { Pause, Play, Square, Trash2 } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { useAnalytics } from "@/components/analytics/analytics-provider";
 import { SelectField } from "@/components/form/select-field";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,10 +54,17 @@ function IdleTimer({
   defaultSubjectId: string | null;
 }) {
   const [state, formAction] = useActionState(startTimerAction, idleFormState);
+  const capture = useAnalytics();
   useActionToast(state, { silentOnSuccess: true });
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form
+      action={(formData) => {
+        capture("timer_started");
+        return formAction(formData);
+      }}
+      className="space-y-5"
+    >
       <div className="rounded-2xl bg-card p-6 text-center ring-1 ring-foreground/10">
         <p className="font-mono text-5xl font-bold tabular-nums">00:00</p>
         <p className="mt-2 text-sm text-muted-foreground">科目を選んで開始します</p>
@@ -98,6 +106,8 @@ function ActiveTimer({
   const [resumeState, resumeAction] = useActionState(resumeTimerAction, idleFormState);
   const [finishState, finishAction] = useActionState(finishTimerAction, idleFormState);
   const [discardState, discardAction] = useActionState(discardTimerAction, idleFormState);
+
+  const capture = useAnalytics();
 
   useActionToast(pauseState, { silentOnSuccess: true });
   useActionToast(resumeState, { silentOnSuccess: true });
@@ -159,7 +169,13 @@ function ActiveTimer({
         <form action={isRunning ? pauseAction : resumeAction} className="flex-1">
           <PauseResumeButton isRunning={isRunning} />
         </form>
-        <form action={finishAction} className="flex-1">
+        <form
+          action={(formData) => {
+            capture("timer_finished", { minutes: Math.round(seconds / 60) });
+            return finishAction(formData);
+          }}
+          className="flex-1"
+        >
           <FinishButton />
         </form>
       </div>

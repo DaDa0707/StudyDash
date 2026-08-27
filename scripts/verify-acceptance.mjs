@@ -320,6 +320,45 @@ try {
   });
 
   // -------------------------------------------------------------------------
+  group("フィードバック（Phase 7）");
+  // -------------------------------------------------------------------------
+  await check("本人は送信でき、自分の分を読める", async () => {
+    const { error } = await userA.client.from("feedback").insert({
+      user_id: userA.id,
+      category: "bug",
+      message: "検証用の送信",
+      page_path: "/feedback",
+    });
+    assert(!error, `送信に失敗: ${error?.message}`);
+
+    const { data } = await userA.client.from("feedback").select("id, message");
+    assert(data.length === 1, `自分の分が読めません（${data.length}件）`);
+    return "送信して読み取れた";
+  });
+
+  await check("他人のフィードバックは読めない", async () => {
+    const { data } = await userB.client.from("feedback").select("id");
+    assert(data.length === 0, `${data.length}件見えてしまいました`);
+    return "0件";
+  });
+
+  await check("送信後は本人でも書き換え・削除できない", async () => {
+    const { data: mine } = await userA.client.from("feedback").select("id").limit(1);
+    const id = mine[0].id;
+
+    const upd = await userA.client
+      .from("feedback")
+      .update({ message: "書き換え" })
+      .eq("id", id)
+      .select("id");
+    const del = await userA.client.from("feedback").delete().eq("id", id).select("id");
+
+    assert(!upd.data || upd.data.length === 0, "更新できてしまいました");
+    assert(!del.data || del.data.length === 0, "削除できてしまいました");
+    return "更新・削除ともに0件";
+  });
+
+  // -------------------------------------------------------------------------
   group("A-10 アカウント削除で作成データが消える");
   // -------------------------------------------------------------------------
   await check("削除前にユーザーAのデータを用意する", async () => {
@@ -356,6 +395,7 @@ try {
       "study_sessions",
       "notification_settings",
       "subscriptions",
+      "feedback",
     ];
 
     const remaining = [];

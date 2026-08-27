@@ -2,6 +2,7 @@ import { BookOpen, CircleCheck, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { TrackOnMount } from "@/components/analytics/track-on-mount";
 import { ClassSessionCard } from "@/components/timetable/class-session-card";
 import { WeekdayTabs } from "@/components/timetable/weekday-tabs";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,8 @@ export default async function TimetablePage({ searchParams }: PageProps<"/timeta
           科目
         </Button>
       </header>
+
+      {justSaved ? <TrackOnMount event="class_session_created" /> : null}
 
       {justSaved ? (
         <p

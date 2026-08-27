@@ -1,6 +1,7 @@
 import { Check, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 
+import { TrackOnMount } from "@/components/analytics/track-on-mount";
 import { BillingPortalButton, PlanPicker, type PlanOption } from "@/components/billing/plan-picker";
 import { DevPlanToggle } from "@/components/billing/dev-plan-toggle";
 import { formatDueDate } from "@/lib/deadline";
@@ -69,6 +70,8 @@ export default async function ProPage({ searchParams }: PageProps<"/pro">) {
 
   return (
     <div className="space-y-8">
+      <TrackOnMount event="pro_page_viewed" properties={{ plan: entitlement }} />
+
       <header className="text-center">
         <span
           aria-hidden

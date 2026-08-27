@@ -4,6 +4,7 @@ import { Check, ExternalLink } from "lucide-react";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { useAnalytics } from "@/components/analytics/analytics-provider";
 import { FormMessage } from "@/components/form/form-message";
 import { Button } from "@/components/ui/button";
 import { openBillingPortalAction, startCheckoutAction } from "@/lib/actions/billing";
@@ -30,12 +31,19 @@ function CheckoutButton() {
 /** §10.2 手順3-4：月額/年額を選んで決済へ進む */
 export function PlanPicker({ plans }: { plans: PlanOption[] }) {
   const [state, formAction] = useActionState(startCheckoutAction, idleFormState);
+  const capture = useAnalytics();
   const [interval, setInterval] = useState<PlanOption["interval"]>(
     plans.find((p) => p.interval === "yearly")?.interval ?? plans[0]?.interval ?? "monthly",
   );
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form
+      action={(formData) => {
+        capture("checkout_started", { interval });
+        return formAction(formData);
+      }}
+      className="space-y-4"
+    >
       <input type="hidden" name="interval" value={interval} />
 
       <div role="radiogroup" aria-label="プラン" className="space-y-2">

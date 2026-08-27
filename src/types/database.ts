@@ -9,6 +9,7 @@ export type PriorityLevel = "low" | "medium" | "high";
 export type AssignmentStatus = "not_started" | "in_progress" | "done";
 export type TodoStatus = "open" | "done";
 export type BillingProvider = "stripe" | "apple";
+export type FeedbackCategory = "bug" | "request" | "question" | "other";
 export type SubscriptionStatus =
   | "incomplete"
   | "trialing"
@@ -121,6 +122,16 @@ export type Subscription = {
   updated_at: string;
 }
 
+export type Feedback = {
+  id: string;
+  user_id: string;
+  category: FeedbackCategory;
+  message: string;
+  page_path: string | null;
+  app_version: string | null;
+  created_at: string;
+}
+
 /** insert 時に省略できる、DB が既定値を埋めるカラム */
 type Generated = "id" | "created_at" | "updated_at";
 
@@ -189,6 +200,11 @@ export type Database = {
         Insert<Subscription, Exclude<keyof Subscription, "user_id">>,
         Partial<Subscription>
       >;
+      feedback: TableDef<
+        Feedback,
+        Insert<Feedback, "id" | "created_at" | "category" | "page_path" | "app_version">,
+        Partial<Feedback>
+      >;
     };
     Views: Record<never, never>;
     Functions: {
@@ -205,6 +221,7 @@ export type Database = {
       todo_status: TodoStatus;
       billing_provider: BillingProvider;
       subscription_status: SubscriptionStatus;
+      feedback_category: FeedbackCategory;
     };
     CompositeTypes: Record<never, never>;
   };

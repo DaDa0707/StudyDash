@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { TrackOnMount } from "@/components/analytics/track-on-mount";
 import { QuotaNotice } from "@/components/quota-notice";
 import { TodoItem } from "@/components/todos/todo-item";
 import { TodoQuickAdd } from "@/components/todos/todo-quick-add";
@@ -66,6 +67,9 @@ export default async function TodosPage({ searchParams }: PageProps<"/todos">) {
 
       <TodoQuickAdd disabled={!quota.allowed} />
       <QuotaNotice quota={quota} message={UPSELL_MESSAGES.openTodos} />
+      {quota.shouldUpsell ? (
+        <TrackOnMount event="quota_reached" properties={{ feature: "openTodos" }} />
+      ) : null}
 
       <div className="flex gap-1" role="tablist" aria-label="表示切替">
         {TABS.map((item) => (

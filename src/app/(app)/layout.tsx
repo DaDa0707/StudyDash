@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { SetupRequired } from "@/components/setup-required";
 import { InAppNotice } from "@/components/notifications/in-app-notice";
@@ -62,22 +63,24 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   });
 
   return (
-    <div className="min-h-dvh">
-      {/* 下部ナビ(56px) + セーフエリア分の余白 */}
-      <div className="mx-auto w-full max-w-2xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-5">
-        {notify ? (
-          <div className="mb-4">
-            <InAppNotice
-              overdueCount={buckets.overdue.length}
-              upcomingCount={buckets.upcoming.length}
-              dayKey={zonedDateKey(now, timezone)}
-            />
-          </div>
-        ) : null}
+    <AnalyticsProvider userId={user.id}>
+      <div className="min-h-dvh">
+        {/* 下部ナビ(56px) + セーフエリア分の余白 */}
+        <div className="mx-auto w-full max-w-2xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-5">
+          {notify ? (
+            <div className="mb-4">
+              <InAppNotice
+                overdueCount={buckets.overdue.length}
+                upcomingCount={buckets.upcoming.length}
+                dayKey={zonedDateKey(now, timezone)}
+              />
+            </div>
+          ) : null}
 
-        {children}
+          {children}
+        </div>
+        <BottomNav />
       </div>
-      <BottomNav />
-    </div>
+    </AnalyticsProvider>
   );
 }

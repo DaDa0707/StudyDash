@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { M_PLUS_2 } from "next/font/google";
 
+import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -49,9 +50,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="ja" className={`${sans.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full bg-background text-foreground antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster position="top-center" />
-          <ServiceWorkerRegister />
+          {/* ログイン後の画面では (app)/layout.tsx が userId 付きで包み直す */}
+          <AnalyticsProvider userId={null}>
+            {children}
+            <Toaster position="top-center" />
+            <ServiceWorkerRegister />
+          </AnalyticsProvider>
         </ThemeProvider>
       </body>
     </html>

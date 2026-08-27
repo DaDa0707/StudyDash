@@ -16,6 +16,7 @@ const PROTECTED_PREFIXES = [
   "/settings",
   "/more",
   "/pro",
+  "/feedback",
   "/onboarding",
 ];
 

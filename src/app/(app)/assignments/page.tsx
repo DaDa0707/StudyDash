@@ -2,6 +2,7 @@ import { CircleCheck, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { TrackOnMount } from "@/components/analytics/track-on-mount";
 import { AssignmentCard } from "@/components/assignments/assignment-card";
 import { QuotaNotice } from "@/components/quota-notice";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,11 @@ export default async function AssignmentsPage({ searchParams }: PageProps<"/assi
           {quota.limit === null ? "" : ` / ${quota.limit}件まで`}
         </p>
       </header>
+
+      {justSaved ? <TrackOnMount event="assignment_created" /> : null}
+      {quota.shouldUpsell ? (
+        <TrackOnMount event="quota_reached" properties={{ feature: "openAssignments" }} />
+      ) : null}
 
       {justSaved ? (
         <p

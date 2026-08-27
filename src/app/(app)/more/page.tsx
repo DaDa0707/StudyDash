@@ -4,6 +4,7 @@ import {
   ChevronRight,
   ListChecks,
   NotebookPen,
+  MessageSquare,
   Settings,
   Sparkles,
 } from "lucide-react";
@@ -30,6 +31,7 @@ export default async function MorePage() {
       note: isPro(entitlement) ? "利用中" : undefined,
     },
     { href: "/settings", label: "設定", icon: Settings, note: undefined },
+    { href: "/feedback", label: "ご意見・ご要望", icon: MessageSquare, note: undefined },
   ];
 
   return (

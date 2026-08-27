@@ -223,5 +223,6 @@ export async function completeOnboardingAction(
   }
 
   revalidatePath("/", "layout");
-  redirect("/home");
+  // 遷移先で計測する（成功したときだけ数えるため）
+  redirect("/home?welcome=1");
 }

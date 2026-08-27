@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { useActionState, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
+import { useAnalytics } from "@/components/analytics/analytics-provider";
 import { FormMessage } from "@/components/form/form-message";
 import { Input } from "@/components/ui/input";
 import { createTodoAction } from "@/lib/actions/todos";
@@ -38,12 +39,14 @@ export function TodoQuickAdd({
   showDueDate?: boolean;
 }) {
   const [state, formAction] = useActionState(createTodoAction, idleFormState);
+  const capture = useAnalytics();
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
     <form
       ref={formRef}
       action={async (formData) => {
+        capture("todo_created");
         await formAction(formData);
         formRef.current?.reset();
       }}
