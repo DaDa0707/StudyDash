@@ -30,6 +30,14 @@ function authErrorMessage(code: string | undefined, fallback: string): string {
       return "このメールアドレスは既に登録されています";
     case "weak_password":
       return "パスワードが簡単すぎます。より複雑なものを設定してください";
+    case "email_address_invalid":
+      return "このメールアドレスは使えません。別のアドレスでお試しください";
+    case "email_address_not_authorized":
+      return "このメールアドレスへは送信できません";
+    case "signup_disabled":
+      return "現在、新規登録を受け付けていません";
+    case "validation_failed":
+      return "入力内容を確認してください";
     case "over_request_rate_limit":
     case "over_email_send_rate_limit":
       return "リクエストが多すぎます。しばらく待ってからお試しください";

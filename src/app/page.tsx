@@ -25,7 +25,11 @@ const FEATURES = [
   },
 ];
 
-export default async function LandingPage() {
+export default async function LandingPage({ searchParams }: PageProps<"/">) {
+  const params = await searchParams;
+  // アカウント削除後の戻り先（deleteAccountAction）
+  const justDeleted = (Array.isArray(params.deleted) ? params.deleted[0] : params.deleted) === "1";
+
   // 設定前でもトップページは表示できるようにする（セットアップ手順は README を参照）
   if (isSupabaseConfigured) {
     const supabase = await createClient();
@@ -45,6 +49,15 @@ export default async function LandingPage() {
       </header>
 
       <main className="flex flex-1 flex-col justify-center py-12">
+        {justDeleted ? (
+          <p
+            role="status"
+            className="mb-6 rounded-lg bg-muted px-3 py-2.5 text-sm text-muted-foreground"
+          >
+            アカウントを削除しました。ご利用ありがとうございました。
+          </p>
+        ) : null}
+
         <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
           学校生活を、1画面に。
         </h1>
