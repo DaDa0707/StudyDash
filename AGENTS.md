@@ -20,7 +20,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 仕様書 §13 のフェーズ単位で実装する。各フェーズで「実装 → テスト → 動作確認 → コミット」を
 完了してから次へ進む。**指示なく次のフェーズへ進まないこと。**
 
-現在 Phase 4（タイマー・履歴）まで完了。
+現在 Phase 5（Pro権限・課金）まで完了。
 
 ## 守るべきルール（§14.1）
 
@@ -41,6 +41,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Free 上限は必ず Server Action の中でも確認する。画面側の非表示だけに頼らない
 - タイマーの経過時間はサーバー側の時刻で確定させる。
   クライアントから秒数を受け取らない（`src/lib/timer.ts`）
+- `subscriptions` を書き換えてよいのは、署名検証を通った Webhook だけ
+  （`src/lib/stripe/sync.ts`）。画面や通常の Server Action から書かない
+- 課金状態から権限を導く計算は `src/lib/billing.ts` に置く
 
 ## データアクセス
 

@@ -143,3 +143,70 @@ export const UPSELL_MESSAGES: Record<QuotaFeature | BooleanFeature, string> = {
   dashboardCustomization: "ダッシュボードの並び替えはProの機能です。",
   csvExport: "CSVエクスポートはProの機能です。",
 };
+
+/** Pro ページの機能比較表の1行（§6） */
+export interface ComparisonRow {
+  feature: string;
+  free: string;
+  pro: string;
+}
+
+function quotaText(limit: Limit, unit: string): string {
+  return limit === null ? "無制限" : `${limit}${unit}まで`;
+}
+
+/**
+ * §6 の機能比較表。PLAN_LIMITS から組み立てるため、
+ * 上限を変えたときに表と実際の挙動がずれない。
+ */
+export function planComparison(): ComparisonRow[] {
+  const free = limitsFor("free");
+  const pro = limitsFor("pro");
+
+  const yesNo = (value: boolean) => (value ? "利用できる" : "利用できない");
+
+  return [
+    { feature: "時間割", free: "利用できる", pro: "利用できる" },
+    { feature: "勉強タイマー", free: "利用できる", pro: "利用できる" },
+    {
+      feature: "未完了の課題",
+      free: quotaText(free.openAssignments, "件"),
+      pro: quotaText(pro.openAssignments, "件"),
+    },
+    {
+      feature: "未完了のTodo",
+      free: quotaText(free.openTodos, "件"),
+      pro: quotaText(pro.openTodos, "件"),
+    },
+    {
+      feature: "学習履歴",
+      free: free.studyHistoryDays === null ? "全期間" : `直近${free.studyHistoryDays}日`,
+      pro: pro.studyHistoryDays === null ? "全期間" : `直近${pro.studyHistoryDays}日`,
+    },
+    {
+      feature: "分析",
+      free: free.advancedAnalytics ? "科目別・推移も見られる" : "今日/今週の合計",
+      pro: pro.advancedAnalytics ? "科目別・推移も見られる" : "今日/今週の合計",
+    },
+    {
+      feature: "締切通知",
+      free: quotaText(free.notificationTimings, "回"),
+      pro: quotaText(pro.notificationTimings, "回"),
+    },
+    {
+      feature: "テーマ",
+      free: free.customThemes ? "追加テーマも選べる" : "ライト/ダーク",
+      pro: pro.customThemes ? "追加テーマも選べる" : "ライト/ダーク",
+    },
+    {
+      feature: "ダッシュボード配置",
+      free: free.dashboardCustomization ? "並び替えできる" : "固定",
+      pro: pro.dashboardCustomization ? "並び替えできる" : "固定",
+    },
+    {
+      feature: "CSVエクスポート",
+      free: yesNo(free.csvExport),
+      pro: yesNo(pro.csvExport),
+    },
+  ];
+}

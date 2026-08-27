@@ -6,7 +6,7 @@
 
 ---
 
-## 現在の進捗：Phase 4 完了
+## 現在の進捗：Phase 5 完了
 
 仕様書 §13 のフェーズ区分に沿って、Phase 単位で実装する。
 
@@ -16,11 +16,11 @@
 | 2 | 時間割・科目（CRUD + 次の授業表示） | ✅ 完了 |
 | 3 | 課題・Todo（CRUD + ホーム集約） | ✅ 完了 |
 | 4 | タイマー・履歴（記録保存 + 今日/今週集計） | ✅ 完了 |
-| 5 | Pro 権限・課金（Free 上限 + entitlement 判定） | 未着手 |
+| 5 | Pro 権限・課金（Free 上限 + entitlement 判定） | ✅ 完了 |
 | 6 | 通知・PWA・仕上げ | 未着手 |
 | 7 | 公開・計測 | 未着手 |
 
-Phase 5 以降で実装する画面には、アプリ内に「Phase N」のプレースホルダを表示している。
+Phase 6 以降で実装する機能には、アプリ内に「Phase N」のプレースホルダを表示している。
 
 ---
 
@@ -80,6 +80,30 @@ Redirect URLs に `http://localhost:3000/auth/confirm` を追加する。
 ```bash
 npm install && npm run dev
 ```
+
+Supabase だけ設定すれば、課金以外のすべての機能が動く。
+
+### 6.（任意）Stripe を設定する
+
+未設定でもアプリは動き、Pro ページが「準備中」と表示される。
+
+1. [Stripe ダッシュボード](https://dashboard.stripe.com)で商品「StudyDash Pro」を作り、
+   月額と年額の価格を追加する。**金額はコードに書かず、Stripe 側の設定を読み出して表示する。**
+2. 価格 ID（`price_...`）とシークレットキーを `.env.local` に入れる。
+3. ローカルで Webhook を受けるには Stripe CLI を使う。
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+表示された `whsec_...` を `STRIPE_WEBHOOK_SECRET` に設定する。
+本番では Stripe ダッシュボードの Webhook 設定で
+`https://<本番ドメイン>/api/stripe/webhook` を登録し、次のイベントを購読する。
+
+- `checkout.session.completed`
+- `customer.subscription.created`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
 
 ---
 
@@ -163,6 +187,23 @@ UI 側の非表示だけに頼らない。
 日付のみで登録された締切（`due_all_day`）は、その日の 23:59 を指す瞬間として保存する。
 これにより期限切れ判定は `now > due_at` の一本で済む。
 
+### 課金と権限（§7 / §9 / A-07）
+
+権限の正は `subscriptions.entitlement` の1列だけ。`profiles.plan` は表示用キャッシュで、
+判定には使わない。
+
+- **書き込めるのは Webhook だけ。** `subscriptions` に INSERT/UPDATE の RLS ポリシーは無く、
+  本人でも書き換えられない。更新は署名検証を通った Webhook から
+  `service_role` で行う（[`src/lib/stripe/sync.ts`](src/lib/stripe/sync.ts)）。
+- **署名を検証してから読む。** 検証に失敗したリクエストは中身を一切見ずに 400 を返す。
+- **保存値をそのまま信じない。** [`effectiveEntitlement()`](src/lib/billing.ts) が
+  保存済みの entitlement と課金状態を突き合わせ、制限が強いほうを採る。
+  Webhook を取りこぼしても Pro が残り続けない（猶予3日）。
+- **カード情報はアプリを通らない。** 決済は Stripe のホスト画面で行う（§9）。
+
+決済から戻った直後は Webhook がまだ届いていないことがあるため、
+`/pro?checkout=success` で Stripe から取り直して反映する（§10.2 手順6）。
+
 ### Free 上限の適用（§6 / A-06）
 
 課題20件・Todo30件の上限は、作成前に **Server Action の中で**確認している
@@ -191,6 +232,8 @@ src/
       todos/          S-06 Todo（今日/今週/完了済み）
       timer/          S-07 勉強タイマー
       analytics/      S-08 分析・学習履歴
+      pro/            S-10 機能比較・購入/管理
+    api/stripe/       Stripe Webhook（署名検証）
     (auth)/           ログイン・登録・パスワード再設定
     auth/             メールリンクの着地点、ログアウト
     onboarding/       S-01 初回設定
@@ -209,6 +252,8 @@ src/
     todos.ts          Todo の区分け（純粋関数）
     timer.ts          タイマーの状態・経過秒数（純粋関数）
     study-stats.ts    学習履歴の集計（純粋関数）
+    billing.ts        課金状態から権限を導く（純粋関数）
+    stripe/           Stripe クライアント・価格取得・同期
   types/database.ts   DB スキーマの型
 supabase/migrations/  スキーマと RLS
 ```

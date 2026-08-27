@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PhaseNotice } from "@/components/phase-notice";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -83,6 +84,14 @@ export default async function SettingsPage() {
           <p className="mt-3 text-xs text-muted-foreground">
             プランはサーバー側（subscriptions.entitlement）で判定しています。
           </p>
+          <Button
+            render={<Link href="/pro" />}
+            nativeButton={false}
+            variant="outline"
+            className="mt-3 h-11 w-full text-base"
+          >
+            {isPro(entitlement) ? "契約を管理する" : "Proの内容を見る"}
+          </Button>
         </div>
       </Section>
 

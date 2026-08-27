@@ -14,7 +14,8 @@ export const config = {
   matcher: [
     /*
      * 静的アセットと画像以外の全リクエストで、セッション Cookie を更新する。
+     * Stripe Webhook は未認証の外部リクエストなので通さない。
      */
-    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|api/stripe/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
