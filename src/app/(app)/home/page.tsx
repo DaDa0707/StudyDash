@@ -59,40 +59,47 @@ export default async function HomePage() {
         </p>
       </header>
 
-      <NextClassCard
-        sessions={sessions}
-        now={now}
-        timezone={timezone}
-        hasSubjects={subjects.length > 0}
-      />
+      {/* §4.2：モバイルは1列、タブレット/PCでは2列に並べる */}
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <NextClassCard
+            sessions={sessions}
+            now={now}
+            timezone={timezone}
+            hasSubjects={subjects.length > 0}
+          />
+        </div>
 
-      <HomeAssignmentsCard assignments={assignments} now={now} timezone={timezone} />
+        <HomeAssignmentsCard assignments={assignments} now={now} timezone={timezone} />
 
-      <HomeTodosCard
-        todos={todos}
-        now={now}
-        timezone={timezone}
-        canAdd={todoQuota.allowed}
-      />
+        <HomeTodosCard
+          todos={todos}
+          now={now}
+          timezone={timezone}
+          canAdd={todoQuota.allowed}
+        />
 
-      <HomeStudyCard
-        now={now}
-        todayTotal={todayTotal}
-        weekTotal={weekTotal}
-        running={
-          running
-            ? {
-                started_at: running.started_at,
-                ended_at: running.ended_at,
-                duration_sec: running.duration_sec,
-                segment_started_at: running.segment_started_at,
-                accumulated_sec: running.accumulated_sec,
-                subjectName: running.subject?.name ?? null,
-                subjectColor: running.subject?.color ?? null,
-              }
-            : null
-        }
-      />
+        <div className="sm:col-span-2">
+          <HomeStudyCard
+            now={now}
+            todayTotal={todayTotal}
+            weekTotal={weekTotal}
+            running={
+              running
+                ? {
+                    started_at: running.started_at,
+                    ended_at: running.ended_at,
+                    duration_sec: running.duration_sec,
+                    segment_started_at: running.segment_started_at,
+                    accumulated_sec: running.accumulated_sec,
+                    subjectName: running.subject?.name ?? null,
+                    subjectColor: running.subject?.color ?? null,
+                  }
+                : null
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 }

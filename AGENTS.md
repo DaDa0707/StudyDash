@@ -20,7 +20,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 仕様書 §13 のフェーズ単位で実装する。各フェーズで「実装 → テスト → 動作確認 → コミット」を
 完了してから次へ進む。**指示なく次のフェーズへ進まないこと。**
 
-現在 Phase 5（Pro権限・課金）まで完了。
+現在 Phase 6（通知・PWA・仕上げ）まで完了。
 
 ## 守るべきルール（§14.1）
 
@@ -44,6 +44,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - `subscriptions` を書き換えてよいのは、署名検証を通った Webhook だけ
   （`src/lib/stripe/sync.ts`）。画面や通常の Server Action から書かない
 - 課金状態から権限を導く計算は `src/lib/billing.ts` に置く
+- サービスワーカーはページや API をキャッシュしない。
+  古い締切を見せないため、オフライン時の案内だけを担う
+- PWA アイコンは `node scripts/generate-icons.mjs` で再生成する
 
 ## データアクセス
 

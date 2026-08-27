@@ -1,7 +1,7 @@
+import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PhaseNotice } from "@/components/phase-notice";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { getEntitlement } from "@/lib/entitlements.server";
@@ -105,19 +105,27 @@ export default async function SettingsPage() {
       </Section>
 
       <Section title="通知">
-        <PhaseNotice
-          phase={6}
-          title="締切リマインド"
-          description="Web/PWAの通知と、Proでの複数タイミング設定を実装します。設定テーブル（notification_settings）はPhase 1で用意済みです。"
-        />
+        <Button
+          render={<Link href="/settings/notifications" />}
+          nativeButton={false}
+          variant="outline"
+          className="h-11 w-full justify-between text-base"
+        >
+          締切リマインドの設定
+          <ChevronRight className="size-4" aria-hidden />
+        </Button>
       </Section>
 
       <Section title="アカウントの削除">
-        <PhaseNotice
-          phase={6}
-          title="退会フロー"
-          description="DB側は auth.users の削除で全データが連鎖削除されるようFK制約を設定済みです。確認画面と削除APIをここに追加します。"
-        />
+        <Button
+          render={<Link href="/settings/delete-account" />}
+          nativeButton={false}
+          variant="outline"
+          className="h-11 w-full justify-between text-base text-destructive"
+        >
+          アカウントを削除する
+          <ChevronRight className="size-4" aria-hidden />
+        </Button>
       </Section>
 
       <form action="/auth/signout" method="post">

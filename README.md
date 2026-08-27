@@ -6,7 +6,7 @@
 
 ---
 
-## 現在の進捗：Phase 5 完了
+## 現在の進捗：Phase 6 完了
 
 仕様書 §13 のフェーズ区分に沿って、Phase 単位で実装する。
 
@@ -17,10 +17,10 @@
 | 3 | 課題・Todo（CRUD + ホーム集約） | ✅ 完了 |
 | 4 | タイマー・履歴（記録保存 + 今日/今週集計） | ✅ 完了 |
 | 5 | Pro 権限・課金（Free 上限 + entitlement 判定） | ✅ 完了 |
-| 6 | 通知・PWA・仕上げ | 未着手 |
+| 6 | 通知・PWA・仕上げ | ✅ 完了 |
 | 7 | 公開・計測 | 未着手 |
 
-Phase 6 以降で実装する機能には、アプリ内に「Phase N」のプレースホルダを表示している。
+MVP（§12 A-01〜A-10）の実装は一通り揃った。残るは Phase 7（公開・計測）。
 
 ---
 
@@ -187,6 +187,32 @@ UI 側の非表示だけに頼らない。
 日付のみで登録された締切（`due_all_day`）は、その日の 23:59 を指す瞬間として保存する。
 これにより期限切れ判定は `now > due_at` の一本で済む。
 
+### PWA（§1）
+
+- マニフェストは [`src/app/manifest.ts`](src/app/manifest.ts)（`/manifest.webmanifest` として配信）
+- アイコンは `node scripts/generate-icons.mjs` で生成する。依存パッケージは要らない
+- サービスワーカーは [`public/sw.js`](public/sw.js)。**本番ビルドでのみ登録する**
+
+サービスワーカーはページや API のレスポンスをキャッシュしない。
+古いデータで締切を誤認させないためで、オフライン時だけ案内ページを返す。
+
+### 通知（§3.1 F-08 / §6）
+
+- タイミングは Free が1つ、Pro が5つまで。**サーバー側でも切り詰める**
+  （[`clampReminderOffsets`](src/lib/notifications.ts)）
+- 通知を控える時間帯は日付をまたぐ指定（22:00〜07:00）に対応
+- アプリを開いたときのアプリ内通知は実装済み
+
+**未実装**：アプリを閉じているあいだのプッシュ配信。
+受信側（サービスワーカーの `push` ハンドラ）は用意してあるが、
+締切を見て push を投げるスケジューラ（cron や Edge Function）はまだ無い。
+
+### アカウント削除（§9 / A-10）
+
+`auth.users` を削除すると、全テーブルの外部キーが `ON DELETE CASCADE` で
+連鎖削除される。認証ユーザーの削除は `service_role` でしか行えないため、
+[`deleteAccountAction`](src/lib/actions/account.ts) だけが admin クライアントを使う。
+
 ### 課金と権限（§7 / §9 / A-07）
 
 権限の正は `subscriptions.entitlement` の1列だけ。`profiles.plan` は表示用キャッシュで、
@@ -233,6 +259,7 @@ src/
       timer/          S-07 勉強タイマー
       analytics/      S-08 分析・学習履歴
       pro/            S-10 機能比較・購入/管理
+      settings/       テーマ・通知・アカウント削除
     api/stripe/       Stripe Webhook（署名検証）
     (auth)/           ログイン・登録・パスワード再設定
     auth/             メールリンクの着地点、ログアウト
@@ -253,6 +280,7 @@ src/
     timer.ts          タイマーの状態・経過秒数（純粋関数）
     study-stats.ts    学習履歴の集計（純粋関数）
     billing.ts        課金状態から権限を導く（純粋関数）
+    notifications.ts  通知タイミング・静かな時間帯（純粋関数）
     stripe/           Stripe クライアント・価格取得・同期
   types/database.ts   DB スキーマの型
 supabase/migrations/  スキーマと RLS
