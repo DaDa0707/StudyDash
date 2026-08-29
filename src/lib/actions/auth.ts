@@ -44,8 +44,19 @@ function authErrorMessage(code: string | undefined, fallback: string): string {
     case "same_password":
       return "現在と同じパスワードは設定できません";
     default:
-      return fallback;
+      // 想定外のコードは文言に丸めるが、問い合わせで原因を追えるよう符牒だけ添える。
+      // 中身（メールアドレスや内部メッセージ）は出さない。
+      return code ? `${fallback}（コード: ${code}）` : fallback;
   }
+}
+
+/** 想定外の失敗はサーバーログに残す。利用者には出さない。 */
+function logAuthFailure(where: string, error: { code?: string; status?: number; message: string }) {
+  console.error(`[auth] ${where} failed`, {
+    code: error.code ?? "(なし)",
+    status: error.status ?? "(なし)",
+    message: error.message,
+  });
 }
 
 /** メールリンクの戻り先。プロキシ配下でも正しい origin を得る。 */
@@ -80,6 +91,7 @@ export async function signUpAction(
   });
 
   if (error) {
+    logAuthFailure("signUp", error);
     return errorState(authErrorMessage(error.code, "登録できませんでした。時間をおいてお試しください"));
   }
 
@@ -111,6 +123,7 @@ export async function signInAction(
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
+    logAuthFailure("signIn", error);
     return errorState(authErrorMessage(error.code, "ログインできませんでした"));
   }
 
