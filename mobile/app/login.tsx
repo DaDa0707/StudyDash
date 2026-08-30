@@ -22,13 +22,13 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  async function signIn() {
+  async function signIn(override?: { email: string; password: string }) {
     setBusy(true);
     setError(null);
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
+      email: (override?.email ?? email).trim(),
+      password: override?.password ?? password,
     });
 
     if (signInError) {
@@ -95,7 +95,7 @@ export default function LoginScreen() {
           ) : null}
 
           <Pressable
-            onPress={signIn}
+            onPress={() => signIn()}
             disabled={busy || !email || !password}
             style={({ pressed }) => ({
               height: 48,
@@ -113,6 +113,23 @@ export default function LoginScreen() {
                 ログイン
               </Text>
             )}
+          </Pressable>
+          {/* 試作の確認用。本番向けの実装では外す。 */}
+          <Pressable
+            onPress={() =>
+              signIn({ email: "demo@studydash.app", password: "StudyDash-Demo-2026" })
+            }
+            disabled={busy}
+            style={({ pressed }) => ({
+              height: 44,
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: pressed ? 0.6 : 1,
+            })}
+          >
+            <Text style={{ color: theme.muted, fontSize: 14 }}>
+              デモデータでログイン
+            </Text>
           </Pressable>
         </View>
       </ScrollView>
