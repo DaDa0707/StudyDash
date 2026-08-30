@@ -4,10 +4,10 @@ import { X } from "lucide-react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { formatDuration } from "@/lib/date";
+import { formatDuration } from "@core/date";
 import { deleteStudySessionAction } from "@/lib/actions/study";
 import { idleFormState } from "@/lib/form";
-import { subjectLabel } from "@/lib/timer";
+import { subjectLabel } from "@core/timer";
 import { useActionToast } from "@/lib/use-action-toast";
 
 export interface HistoryRow {

@@ -5,7 +5,7 @@
  * DB アクセスや Stripe 呼び出しは含めない。
  */
 
-import type { PlanType, SubscriptionStatus } from "@/types/database";
+import type { PlanType, SubscriptionStatus } from "./database";
 
 /** この状態のあいだは Pro を使える。past_due は決済再試行中の猶予。 */
 const PRO_STATUSES: readonly SubscriptionStatus[] = ["active", "trialing", "past_due"];

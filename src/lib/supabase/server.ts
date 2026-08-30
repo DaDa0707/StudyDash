@@ -4,7 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 import { requirePublicEnv } from "@/lib/env";
-import type { Database } from "@/types/database";
+import type { Database } from "@core/database";
 
 /**
  * Server Component / Server Action / Route Handler 用のクライアント。

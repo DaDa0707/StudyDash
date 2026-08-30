@@ -8,7 +8,7 @@ import { WeekdayTabs } from "@/components/timetable/weekday-tabs";
 import { Button } from "@/components/ui/button";
 import { listClassSessions, listSubjects } from "@/lib/queries/timetable";
 import { createClient } from "@/lib/supabase/server";
-import { WEEKDAYS, groupByWeekday, zonedWeekdayAndMinutes } from "@/lib/timetable";
+import { WEEKDAYS, groupByWeekday, zonedWeekdayAndMinutes } from "@core/timetable";
 
 export const metadata: Metadata = { title: "時間割" };
 

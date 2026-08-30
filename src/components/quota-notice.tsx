@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react";
 
-import type { QuotaCheck } from "@/lib/entitlements";
+import type { QuotaCheck } from "@core/entitlements";
 
 /**
  * Free 上限に達したときの案内（§12 A-06）。

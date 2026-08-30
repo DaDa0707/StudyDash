@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { startOfDaysAgo, startOfThisWeek, startOfToday } from "@/lib/deadline";
+import { startOfDaysAgo, startOfThisWeek, startOfToday } from "../deadline";
 import {
   finishedOnly,
   inRange,
@@ -8,7 +8,7 @@ import {
   sumBySubject,
   totalSeconds,
   type CompletedSession,
-} from "@/lib/study-stats";
+} from "../study-stats";
 
 const TOKYO = "Asia/Tokyo";
 const jst = (iso: string) => new Date(`${iso}+09:00`);

@@ -7,7 +7,7 @@ import {
   type AnalyticsEvent,
   type AnalyticsProperties,
   type AnalyticsSink,
-} from "@/lib/analytics";
+} from "@core/analytics";
 
 /**
  * 利用計測の送信先を差し替えられるようにする（仕様書 §7「PostHog等（後付け可）」）。

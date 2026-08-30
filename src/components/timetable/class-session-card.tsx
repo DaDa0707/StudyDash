@@ -1,8 +1,8 @@
 import { ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 
-import { formatTimeRange } from "@/lib/timetable";
-import type { SessionWithSubject } from "@/lib/timetable";
+import { formatTimeRange } from "@core/timetable";
+import type { SessionWithSubject } from "@core/timetable";
 
 /** 週表示の1コマ。タップで編集画面へ移動する。 */
 export function ClassSessionCard({ session }: { session: SessionWithSubject }) {

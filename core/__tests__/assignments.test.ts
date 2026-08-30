@@ -8,8 +8,8 @@ import {
   sortByDueDate,
   statusLabel,
   upcomingAssignments,
-} from "@/lib/assignments";
-import type { AssignmentStatus, PriorityLevel } from "@/types/database";
+} from "../assignments";
+import type { AssignmentStatus, PriorityLevel } from "../database";
 
 const item = (
   id: string,

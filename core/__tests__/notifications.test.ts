@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { limitOf } from "@/lib/entitlements";
+import { limitOf } from "../entitlements";
 import {
   REMINDER_OPTIONS,
   clampReminderOffsets,
@@ -8,7 +8,7 @@ import {
   isQuietHours,
   reminderLabel,
   shouldNotify,
-} from "@/lib/notifications";
+} from "../notifications";
 
 const TOKYO = "Asia/Tokyo";
 const jst = (iso: string) => new Date(`${iso}+09:00`);

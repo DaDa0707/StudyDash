@@ -2,10 +2,10 @@ import "server-only";
 
 import { cache } from "react";
 
-import { startOfDaysAgo } from "@/lib/deadline";
-import { limitOf, type Entitlement } from "@/lib/entitlements";
+import { startOfDaysAgo } from "@core/deadline";
+import { limitOf, type Entitlement } from "@core/entitlements";
 import { createClient } from "@/lib/supabase/server";
-import type { StudySession, Subject } from "@/types/database";
+import type { StudySession, Subject } from "@core/database";
 
 export type StudySessionWithSubject = StudySession & {
   subject: Pick<Subject, "id" | "name" | "color"> | null;

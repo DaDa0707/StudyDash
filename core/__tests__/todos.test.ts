@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { bucketOf, countOpen, groupTodos } from "@/lib/todos";
-import type { TodoStatus } from "@/types/database";
+import { bucketOf, countOpen, groupTodos } from "../todos";
+import type { TodoStatus } from "../database";
 
 const TOKYO = "Asia/Tokyo";
 const jst = (iso: string) => new Date(`${iso}+09:00`);

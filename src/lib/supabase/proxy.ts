@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { isSupabaseConfigured, requirePublicEnv } from "@/lib/env";
-import type { Database } from "@/types/database";
+import type { Database } from "@core/database";
 
 /** 認証が要るパス。ここに載らないパスは公開扱い。 */
 const PROTECTED_PREFIXES = [

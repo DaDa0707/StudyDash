@@ -4,6 +4,6 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+    include: ["core/**/*.test.ts", "src/**/*.test.ts", "src/**/*.test.tsx"],
   },
 });

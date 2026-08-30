@@ -7,7 +7,7 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { updateNotificationSettingsAction } from "@/lib/actions/notifications";
 import { idleFormState } from "@/lib/form";
-import { REMINDER_OPTIONS } from "@/lib/notifications";
+import { REMINDER_OPTIONS } from "@core/notifications";
 import { cn } from "@/lib/utils";
 
 interface Props {

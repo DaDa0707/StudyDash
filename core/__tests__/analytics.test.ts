@@ -6,7 +6,7 @@ import {
   isKnownEvent,
   sanitizeProperties,
   type AnalyticsSink,
-} from "@/lib/analytics";
+} from "../analytics";
 
 function makeSink(): AnalyticsSink & { calls: unknown[][] } {
   const calls: unknown[][] = [];

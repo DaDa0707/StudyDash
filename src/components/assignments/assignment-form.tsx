@@ -10,9 +10,9 @@ import {
   createAssignmentAction,
   updateAssignmentAction,
 } from "@/lib/actions/assignments";
-import { ASSIGNMENT_STATUSES, PRIORITIES } from "@/lib/assignments";
+import { ASSIGNMENT_STATUSES, PRIORITIES } from "@core/assignments";
 import { idleFormState } from "@/lib/form";
-import type { AssignmentStatus, PriorityLevel, Subject } from "@/types/database";
+import type { AssignmentStatus, PriorityLevel, Subject } from "@core/database";
 
 interface Props {
   subjects: Subject[];

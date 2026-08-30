@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { useAnalytics } from "@/components/analytics/analytics-provider";
-import type { AnalyticsEvent, AnalyticsProperties } from "@/lib/analytics";
+import type { AnalyticsEvent, AnalyticsProperties } from "@core/analytics";
 
 /**
  * 画面が出たときに1回だけイベントを送る。

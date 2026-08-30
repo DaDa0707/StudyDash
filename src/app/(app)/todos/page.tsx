@@ -5,11 +5,11 @@ import { TrackOnMount } from "@/components/analytics/track-on-mount";
 import { QuotaNotice } from "@/components/quota-notice";
 import { TodoItem } from "@/components/todos/todo-item";
 import { TodoQuickAdd } from "@/components/todos/todo-quick-add";
-import { checkQuota, UPSELL_MESSAGES } from "@/lib/entitlements";
+import { checkQuota, UPSELL_MESSAGES } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { listTodos } from "@/lib/queries/assignments";
 import { createClient } from "@/lib/supabase/server";
-import { countOpen, groupTodos } from "@/lib/todos";
+import { countOpen, groupTodos } from "@core/todos";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Todo" };

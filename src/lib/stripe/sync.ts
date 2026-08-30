@@ -2,7 +2,7 @@ import "server-only";
 
 import type Stripe from "stripe";
 
-import { normalizeStripeStatus, toSubscriptionUpdate } from "@/lib/billing";
+import { normalizeStripeStatus, toSubscriptionUpdate } from "@core/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe/client";
 

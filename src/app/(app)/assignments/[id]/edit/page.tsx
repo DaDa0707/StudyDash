@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import { AssignmentForm } from "@/components/assignments/assignment-form";
 import { DeleteAssignmentButton } from "@/components/assignments/delete-assignment-button";
-import { zonedDateKey, zonedTimeKey } from "@/lib/deadline";
+import { zonedDateKey, zonedTimeKey } from "@core/deadline";
 import { getAssignment } from "@/lib/queries/assignments";
 import { listSubjects } from "@/lib/queries/timetable";
 import { createClient } from "@/lib/supabase/server";

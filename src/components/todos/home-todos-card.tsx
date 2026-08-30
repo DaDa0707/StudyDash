@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import { TodoItem } from "@/components/todos/todo-item";
 import { TodoQuickAdd } from "@/components/todos/todo-quick-add";
-import { groupTodos } from "@/lib/todos";
-import type { Todo } from "@/types/database";
+import { groupTodos } from "@core/todos";
+import type { Todo } from "@core/database";
 
 /** §4.2「今日のTodo」。1タップで完了・追加できる。 */
 export function HomeTodosCard({

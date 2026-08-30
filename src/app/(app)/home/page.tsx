@@ -5,16 +5,16 @@ import { HomeAssignmentsCard } from "@/components/assignments/home-assignments-c
 import { HomeStudyCard } from "@/components/timer/home-study-card";
 import { HomeTodosCard } from "@/components/todos/home-todos-card";
 import { NextClassCard } from "@/components/timetable/next-class-card";
-import { formatToday, greetingFor } from "@/lib/date";
-import { startOfThisWeek, startOfToday } from "@/lib/deadline";
-import { checkQuota, isPro } from "@/lib/entitlements";
+import { formatToday, greetingFor } from "@core/date";
+import { startOfThisWeek, startOfToday } from "@core/deadline";
+import { checkQuota, isPro } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { listAssignments, listTodos } from "@/lib/queries/assignments";
 import { getRunningSession, listStudySessions } from "@/lib/queries/study";
 import { listClassSessions, listSubjects } from "@/lib/queries/timetable";
 import { createClient } from "@/lib/supabase/server";
-import { inRange, totalSeconds } from "@/lib/study-stats";
-import { countOpen } from "@/lib/todos";
+import { inRange, totalSeconds } from "@core/study-stats";
+import { countOpen } from "@core/todos";
 
 export const metadata: Metadata = { title: "ホーム" };
 

@@ -2,22 +2,22 @@ import { Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 
 import { HistoryList, type HistoryRow } from "@/components/timer/history-list";
-import { formatDuration } from "@/lib/date";
+import { formatDuration } from "@core/date";
 import {
   formatDueDate,
   startOfThisWeek,
   startOfToday,
   zonedDateKey,
   zonedTimeKey,
-} from "@/lib/deadline";
-import { can, limitOf, UPSELL_MESSAGES } from "@/lib/entitlements";
+} from "@core/deadline";
+import { can, limitOf, UPSELL_MESSAGES } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { listAssignments } from "@/lib/queries/assignments";
 import { listStudySessions } from "@/lib/queries/study";
 import { listSubjects } from "@/lib/queries/timetable";
 import { createClient } from "@/lib/supabase/server";
-import { inRange, sumByDay, sumBySubject, totalSeconds } from "@/lib/study-stats";
-import { subjectLabel } from "@/lib/timer";
+import { inRange, sumByDay, sumBySubject, totalSeconds } from "@core/study-stats";
+import { subjectLabel } from "@core/timer";
 
 export const metadata: Metadata = { title: "分析" };
 

@@ -22,6 +22,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // モバイルは別プロジェクト。mobile/ 側で検査する。
+    "mobile/**",
   ]),
 ]);
 

@@ -7,7 +7,7 @@ import {
   limitOf,
   limitsFor,
   studyHistoryFloor,
-} from "@/lib/entitlements";
+} from "../entitlements";
 
 describe("プラン上限（仕様書 §6）", () => {
   it("Free の上限が仕様どおりである", () => {

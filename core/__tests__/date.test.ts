@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatDuration, formatToday, greetingFor, hourIn } from "@/lib/date";
+import { formatDuration, formatToday, greetingFor, hourIn } from "../date";
 
 const TOKYO = "Asia/Tokyo";
 

@@ -1,4 +1,4 @@
-import { describeDueDate } from "@/lib/deadline";
+import { describeDueDate } from "@core/deadline";
 import { cn } from "@/lib/utils";
 
 /** 締切の相対表示（§5.2）。期限切れ・今日だけ警告色を使う（§11）。 */

@@ -19,8 +19,8 @@ import {
   findSlotConflicts,
   formatTime,
   weekdayLabel,
-} from "@/lib/timetable";
-import type { Subject } from "@/types/database";
+} from "@core/timetable";
+import type { Subject } from "@core/database";
 
 /** 重複判定に必要な最小限の情報 */
 export interface SlotSummary {

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AssignmentForm } from "@/components/assignments/assignment-form";
-import { zonedDateKey } from "@/lib/deadline";
-import { checkQuota } from "@/lib/entitlements";
+import { zonedDateKey } from "@core/deadline";
+import { checkQuota } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { countOpenAssignments } from "@/lib/queries/assignments";
 import { listSubjects } from "@/lib/queries/timetable";

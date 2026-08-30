@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { errorState, successState, type FormState } from "@/lib/form";
 import { createClient } from "@/lib/supabase/server";
-import { accumulatedOnPause, durationOnFinish, formatTimerDisplay } from "@/lib/timer";
+import { accumulatedOnPause, durationOnFinish, formatTimerDisplay } from "@core/timer";
 
 /**
  * 勉強タイマーの操作（§5.3 / A-05）。

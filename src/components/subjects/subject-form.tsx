@@ -9,7 +9,7 @@ import { SubmitButton } from "@/components/form/submit-button";
 import { createSubjectAction, updateSubjectAction } from "@/lib/actions/subjects";
 import { idleFormState } from "@/lib/form";
 import { SUBJECT_COLORS } from "@/lib/validation/timetable";
-import type { Subject } from "@/types/database";
+import type { Subject } from "@core/database";
 
 interface Props {
   /** 未指定なら新規作成 */

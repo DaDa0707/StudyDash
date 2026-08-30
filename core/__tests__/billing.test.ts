@@ -6,8 +6,8 @@ import {
   entitlementFromSubscription,
   normalizeStripeStatus,
   toSubscriptionUpdate,
-} from "@/lib/billing";
-import { PLAN_LIMITS, planComparison } from "@/lib/entitlements";
+} from "../billing";
+import { PLAN_LIMITS, planComparison } from "../entitlements";
 
 const now = new Date("2026-08-25T10:00:00Z");
 const daysFromNow = (days: number) =>

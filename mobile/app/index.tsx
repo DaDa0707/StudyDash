@@ -9,20 +9,20 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { upcomingAssignments } from "@/core/assignments";
-import { formatToday, greetingFor, formatDuration } from "@/core/date";
-import { describeDueDate, startOfThisWeek, startOfToday } from "@/core/deadline";
-import { inRange, totalSeconds } from "@/core/study-stats";
+import { upcomingAssignments } from "@core/assignments";
+import { formatToday, greetingFor, formatDuration } from "@core/date";
+import { describeDueDate, startOfThisWeek, startOfToday } from "@core/deadline";
+import { inRange, totalSeconds } from "@core/study-stats";
 import {
   findCurrentOrNextClass,
   formatTimeRange,
   formatTimeUntil,
   weekdayLabel,
   type SessionWithSubject,
-} from "@/core/timetable";
+} from "@core/timetable";
 import { supabase } from "@/lib/supabase";
 import { spacing, theme } from "@/lib/theme";
-import type { Assignment, StudySession, Subject } from "@/core/database";
+import type { Assignment, StudySession, Subject } from "@core/database";
 
 type AssignmentRow = Assignment & { subject: Pick<Subject, "id" | "name" | "color"> | null };
 

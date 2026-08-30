@@ -8,7 +8,7 @@ import {
   formatTimeUntil,
   weekdayLabel,
   type SessionWithSubject,
-} from "@/lib/timetable";
+} from "@core/timetable";
 
 interface Props {
   sessions: SessionWithSubject[];

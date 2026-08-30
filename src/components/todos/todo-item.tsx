@@ -9,7 +9,7 @@ import { deleteTodoAction, toggleTodoAction } from "@/lib/actions/todos";
 import { idleFormState } from "@/lib/form";
 import { useActionToast } from "@/lib/use-action-toast";
 import { cn } from "@/lib/utils";
-import type { Todo } from "@/types/database";
+import type { Todo } from "@core/database";
 
 function ToggleButton({ done, title }: { done: boolean; title: string }) {
   const { pending } = useFormStatus();

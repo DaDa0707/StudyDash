@@ -4,9 +4,9 @@ import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { SetupRequired } from "@/components/setup-required";
 import { InAppNotice } from "@/components/notifications/in-app-notice";
-import { zonedDateKey } from "@/lib/deadline";
+import { zonedDateKey } from "@core/deadline";
 import { isSupabaseConfigured } from "@/lib/env";
-import { dueBuckets, shouldNotify } from "@/lib/notifications";
+import { dueBuckets, shouldNotify } from "@core/notifications";
 import { listAssignments } from "@/lib/queries/assignments";
 import { createClient } from "@/lib/supabase/server";
 

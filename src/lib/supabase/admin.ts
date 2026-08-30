@@ -3,7 +3,7 @@ import "server-only";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 import { requirePublicEnv, requireServiceRoleKey } from "@/lib/env";
-import type { Database } from "@/types/database";
+import type { Database } from "@core/database";
 
 /**
  * service_role クライアント。RLS をバイパスするため、

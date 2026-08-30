@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { WEEKDAYS } from "@/lib/timetable";
+import { WEEKDAYS } from "@core/timetable";
 import { cn } from "@/lib/utils";
 
 interface Props {

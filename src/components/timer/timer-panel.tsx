@@ -15,9 +15,9 @@ import {
   startTimerAction,
 } from "@/lib/actions/study";
 import { idleFormState } from "@/lib/form";
-import { elapsedSeconds, formatTimerDisplay, subjectLabel, type TimerFields } from "@/lib/timer";
+import { elapsedSeconds, formatTimerDisplay, subjectLabel, type TimerFields } from "@core/timer";
 import { useActionToast } from "@/lib/use-action-toast";
-import type { Subject } from "@/types/database";
+import type { Subject } from "@core/database";
 
 interface RunningSession extends TimerFields {
   id: string;

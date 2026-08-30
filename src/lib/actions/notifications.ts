@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { limitOf } from "@/lib/entitlements";
+import { limitOf } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { errorState, successState, type FormState } from "@/lib/form";
-import { clampReminderOffsets } from "@/lib/notifications";
+import { clampReminderOffsets } from "@core/notifications";
 import { createClient } from "@/lib/supabase/server";
 
 /** 通知設定の更新（§3.1 F-08 / §6） */

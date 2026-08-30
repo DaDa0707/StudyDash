@@ -5,9 +5,9 @@ import Link from "next/link";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { NotificationPermissionRequest } from "@/components/notifications/permission-request";
 import { NotificationSettingsForm } from "@/components/notifications/notification-settings-form";
-import { isPro, limitOf, UPSELL_MESSAGES } from "@/lib/entitlements";
+import { isPro, limitOf, UPSELL_MESSAGES } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
-import { formatTime } from "@/lib/timetable";
+import { formatTime } from "@core/timetable";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "通知" };

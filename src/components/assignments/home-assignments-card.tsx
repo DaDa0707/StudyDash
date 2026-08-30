@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DueBadge } from "@/components/assignments/due-badge";
 import { ToggleAssignment } from "@/components/assignments/toggle-assignment";
 import { Button } from "@/components/ui/button";
-import { HOME_ASSIGNMENT_LIMIT, upcomingAssignments } from "@/lib/assignments";
+import { HOME_ASSIGNMENT_LIMIT, upcomingAssignments } from "@core/assignments";
 import type { AssignmentWithSubject } from "@/lib/queries/assignments";
 
 /** §4.2「締切が近い課題（最大3件）」 */

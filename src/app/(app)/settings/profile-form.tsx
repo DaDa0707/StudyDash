@@ -9,7 +9,7 @@ import { updateProfileAction } from "@/lib/actions/profile";
 import { idleFormState } from "@/lib/form";
 import { cn } from "@/lib/utils";
 import { SCHOOL_TYPES } from "@/lib/validation/auth";
-import type { SchoolType } from "@/types/database";
+import type { SchoolType } from "@core/database";
 
 interface Props {
   defaultDisplayName: string;

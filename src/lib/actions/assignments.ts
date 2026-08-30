@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { checkQuota, UPSELL_MESSAGES } from "@/lib/entitlements";
+import { checkQuota, UPSELL_MESSAGES } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
-import { endOfDayInZone, zonedToUtc } from "@/lib/deadline";
+import { endOfDayInZone, zonedToUtc } from "@core/deadline";
 import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
 import { countOpenAssignments } from "@/lib/queries/assignments";
 import { createClient } from "@/lib/supabase/server";

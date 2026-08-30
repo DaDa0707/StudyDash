@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 
 import { createClient } from "@/lib/supabase/server";
-import type { Assignment, Subject, Todo } from "@/types/database";
+import type { Assignment, Subject, Todo } from "@core/database";
 
 export type AssignmentWithSubject = Assignment & {
   subject: Pick<Subject, "id" | "name" | "color"> | null;

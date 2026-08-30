@@ -8,7 +8,7 @@ import {
   subjectLabel,
   timerStateOf,
   type TimerFields,
-} from "@/lib/timer";
+} from "../timer";
 
 const at = (iso: string) => new Date(`${iso}+09:00`);
 

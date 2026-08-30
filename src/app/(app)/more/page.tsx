@@ -12,7 +12,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { isPro } from "@/lib/entitlements";
+import { isPro } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 
 export const metadata: Metadata = { title: "その他" };

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { MAX_PERIOD, MIN_PERIOD, parseTimeToMinutes } from "@/lib/timetable";
+import { MAX_PERIOD, MIN_PERIOD, parseTimeToMinutes } from "@core/timetable";
 
 /** 表示色。DB 側の check 制約（^#[0-9a-fA-F]{6}$）と揃える。 */
 const hexColor = z

@@ -2,8 +2,8 @@ import "server-only";
 
 import { cache } from "react";
 
-import { effectiveEntitlement } from "@/lib/billing";
-import type { Entitlement } from "@/lib/entitlements";
+import { effectiveEntitlement } from "@core/billing";
+import type { Entitlement } from "@core/entitlements";
 import { createClient } from "@/lib/supabase/server";
 
 /**

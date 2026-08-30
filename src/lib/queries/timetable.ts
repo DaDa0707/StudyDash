@@ -3,8 +3,8 @@ import "server-only";
 import { cache } from "react";
 
 import { createClient } from "@/lib/supabase/server";
-import type { SessionWithSubject } from "@/lib/timetable";
-import type { Subject } from "@/types/database";
+import type { SessionWithSubject } from "@core/timetable";
+import type { Subject } from "@core/database";
 
 /**
  * 時間割まわりの読み取り。

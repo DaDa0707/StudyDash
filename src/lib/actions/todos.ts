@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { endOfDayInZone } from "@/lib/deadline";
-import { checkQuota, UPSELL_MESSAGES } from "@/lib/entitlements";
+import { endOfDayInZone } from "@core/deadline";
+import { checkQuota, UPSELL_MESSAGES } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
 import { countOpenTodos } from "@/lib/queries/assignments";

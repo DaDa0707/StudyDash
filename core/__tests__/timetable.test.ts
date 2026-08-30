@@ -11,7 +11,7 @@ import {
   groupByWeekday,
   parseTimeToMinutes,
   zonedWeekdayAndMinutes,
-} from "@/lib/timetable";
+} from "../timetable";
 
 const TOKYO = "Asia/Tokyo";
 

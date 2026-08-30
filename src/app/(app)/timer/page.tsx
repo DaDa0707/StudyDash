@@ -3,13 +3,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { TimerPanel } from "@/components/timer/timer-panel";
-import { formatDuration } from "@/lib/date";
-import { startOfThisWeek, startOfToday } from "@/lib/deadline";
+import { formatDuration } from "@core/date";
+import { startOfThisWeek, startOfToday } from "@core/deadline";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { getRunningSession, listStudySessions } from "@/lib/queries/study";
 import { listSubjects } from "@/lib/queries/timetable";
 import { createClient } from "@/lib/supabase/server";
-import { inRange, totalSeconds } from "@/lib/study-stats";
+import { inRange, totalSeconds } from "@core/study-stats";
 
 export const metadata: Metadata = { title: "タイマー" };
 

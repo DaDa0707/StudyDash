@@ -53,6 +53,27 @@ Phase 1〜7 まで完了。§12 A-01〜A-10 は実際の Supabase に接続し�
 - **計測に利用者が書いた文章を混ぜない。** イベントは `src/lib/analytics.ts` の
   `ANALYTICS_EVENTS` に足し、値は `ALLOWED_STRING_VALUES` を通るものだけにする
 
+## 構成
+
+```
+core/       web と mobile が共有する純粋ロジック（＋テスト）
+src/        Web 版（Next.js）
+mobile/     iOS 版（Expo / React Native）
+supabase/   スキーマとマイグレーション（両方が同じ DB を使う）
+```
+
+**`core/` には React も Next.js も Supabase も持ち込まない。** ブラウザ専用 API
+（`window` / `localStorage`）も Node 専用 API（`process` / `require`）も使わない。
+どちらのプラットフォームからも同じコードが動くことが唯一の条件。
+
+参照は両方から `@core/xxx`。web は tsconfig の paths、mobile は
+`mobile/metro.config.js` の `resolveRequest` で解決する
+（Metro は `@` 始まりをスコープ付きパッケージとして扱うため、
+`extraNodeModules` では解決できない）。
+
+ロジックを足すときは `core/` に書き、テストも `core/__tests__/` に置く。
+画面固有のものだけ `src/` か `mobile/` に置く。
+
 ## データアクセス
 
 - 新しいテーブルは必ず `user_id` で所有者を紐付け、RLS を有効化する（§9）

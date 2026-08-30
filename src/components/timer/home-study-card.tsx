@@ -2,8 +2,8 @@ import { ChevronRight, Play, Timer } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { formatDuration } from "@/lib/date";
-import { elapsedSeconds, formatTimerDisplay, subjectLabel, type TimerFields } from "@/lib/timer";
+import { formatDuration } from "@core/date";
+import { elapsedSeconds, formatTimerDisplay, subjectLabel, type TimerFields } from "@core/timer";
 
 interface Props {
   running:

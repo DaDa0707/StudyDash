@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { DueBadge } from "@/components/assignments/due-badge";
 import { ToggleAssignment } from "@/components/assignments/toggle-assignment";
-import { isHighPriority, priorityLabel } from "@/lib/assignments";
+import { isHighPriority, priorityLabel } from "@core/assignments";
 import type { AssignmentWithSubject } from "@/lib/queries/assignments";
 import { cn } from "@/lib/utils";
 

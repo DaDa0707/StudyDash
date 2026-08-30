@@ -11,7 +11,7 @@ import {
   zonedDateKey,
   zonedTimeKey,
   zonedToUtc,
-} from "@/lib/deadline";
+} from "../deadline";
 
 const TOKYO = "Asia/Tokyo";
 const NY = "America/New_York";
