@@ -4,6 +4,7 @@ import {
   ChevronRight,
   ListChecks,
   NotebookPen,
+  FileText,
   MessageSquare,
   Settings,
   Sparkles,
@@ -32,6 +33,8 @@ export default async function MorePage() {
     },
     { href: "/settings", label: "設定", icon: Settings, note: undefined },
     { href: "/feedback", label: "ご意見・ご要望", icon: MessageSquare, note: undefined },
+    { href: "/terms", label: "利用規約", icon: FileText, note: undefined },
+    { href: "/privacy", label: "プライバシーポリシー", icon: FileText, note: undefined },
   ];
 
   return (

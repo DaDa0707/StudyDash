@@ -17,6 +17,18 @@ export default function SignUpPage() {
 
       <SignUpForm />
 
+      <p className="text-center text-xs leading-relaxed text-muted-foreground">
+        登録すると{" "}
+        <Link href="/terms" className="underline underline-offset-4 hover:text-foreground">
+          利用規約
+        </Link>{" "}
+        と{" "}
+        <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
+          プライバシーポリシー
+        </Link>{" "}
+        に同意したものとみなします。
+      </p>
+
       <p className="text-center text-sm text-muted-foreground">
         すでにアカウントをお持ちの場合は{" "}
         <Link href="/login" className="font-medium text-foreground underline underline-offset-4">

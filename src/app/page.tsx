@@ -99,9 +99,19 @@ export default async function LandingPage({ searchParams }: PageProps<"/">) {
         </ul>
       </main>
 
-      <footer className="flex items-center justify-between border-t pt-6">
-        <p className="text-xs text-muted-foreground">StudyDash v0.1 (MVP)</p>
-        <ThemeToggle />
+      <footer className="space-y-4 border-t pt-6">
+        <nav className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
+          <Link href="/terms" className="underline underline-offset-4 hover:text-foreground">
+            利用規約
+          </Link>
+          <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
+            プライバシーポリシー
+          </Link>
+        </nav>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">StudyDash v0.1 (MVP)</p>
+          <ThemeToggle />
+        </div>
       </footer>
     </div>
   );
