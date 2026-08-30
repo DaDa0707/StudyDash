@@ -106,6 +106,47 @@ export async function signUpAction(
   redirect("/onboarding");
 }
 
+/**
+ * 確認メールを送り直す。
+ *
+ * 確認メールが届かない・期限が切れた場合の唯一の復旧手段。
+ * 送信の可否でアカウントの有無を推測されないよう、結果に関わらず同じ文言を返す
+ * （送信上限に当たったときだけは、待てば直ると分かるように伝える）。
+ */
+export async function resendConfirmationAction(
+  _prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const parsed = resetPasswordSchema.safeParse({ email: formData.get("email") });
+
+  if (!parsed.success) {
+    return errorState("入力内容を確認してください", toFieldErrors(parsed.error));
+  }
+
+  const supabase = await createClient();
+  const origin = await siteOrigin();
+
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsed.data.email,
+    options: { emailRedirectTo: `${origin}/auth/confirm?next=/onboarding` },
+  });
+
+  if (error) {
+    logAuthFailure("resendConfirmation", error);
+
+    if (error.code === "over_email_send_rate_limit") {
+      return errorState(
+        "送信が立て込んでいます。しばらく待ってからお試しください",
+      );
+    }
+  }
+
+  return successState(
+    "確認メールを送り直しました。届かない場合は迷惑メールもご確認ください。",
+  );
+}
+
 export async function signInAction(
   _prevState: FormState,
   formData: FormData,

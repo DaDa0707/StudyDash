@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { TrackOnMount } from "@/components/analytics/track-on-mount";
+import { ResendConfirmation } from "@/components/auth/resend-confirmation";
 
 import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
@@ -16,10 +17,11 @@ export function SignUpForm() {
   // 確認メール送信後はフォームを畳み、次の操作を案内するだけにする。
   if (state.status === "success") {
     return (
-      <>
+      <div className="space-y-4">
         <TrackOnMount event="signed_up" />
         <FormMessage state={state} />
-      </>
+        <ResendConfirmation />
+      </div>
     );
   }
 

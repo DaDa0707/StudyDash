@@ -43,11 +43,63 @@ npm run verify:db
 ### メール送信（重要）
 
 Supabase の内蔵メールは**1時間に数通**しか送れない。
-登録が数件でも詰まるので、公開前に自前の SMTP を設定する。
+自分ひとりで試すぶんにも足りず、続けて登録するとすぐ
+`over_email_send_rate_limit` で弾かれる。
 
-**Authentication → Emails → SMTP Settings** で、Resend / SendGrid / Amazon SES などを設定する。
+#### 一時的に確認メールを使わずに進める
 
-未設定のまま公開すると、登録した利用者に確認メールが届かない。
+動作を見たいだけの段階なら、**Authentication → Sign In / Providers → Email** の
+「Confirm email」をオフにする。登録した瞬間にログイン状態になる。
+
+**他の人に使ってもらう前には必ず戻すこと。** オフのままだと、
+他人のメールアドレスで勝手にアカウントを作れてしまう。
+
+#### 本番で使うには SMTP を設定する
+
+**Authentication → Emails → SMTP Settings** で自前の送信元を設定する。
+無料枠のある [Resend](https://resend.com) が手軽。
+
+1. Resend でアカウントを作り、送信元にするドメインを登録する
+   （独自ドメインが無ければ、検証用の共有ドメインでも始められる）
+2. API キーを発行する
+3. Supabase の SMTP Settings に入れる
+
+| 項目 | 値 |
+| --- | --- |
+| Host | `smtp.resend.com` |
+| Port | `465` |
+| Username | `resend` |
+| Password | Resend の API キー |
+| Sender email | 検証済みドメインのアドレス |
+| Sender name | `StudyDash` |
+
+設定後、**Authentication → Rate Limits** で送信上限を必要な値まで上げる。
+内蔵メールの上限のまま残っていることがある。
+
+#### 確認：メールを1通も使わずに設定を検証する
+
+送信せずにリンクの生成だけを試せる。
+
+```js
+// admin クライアントで
+const { data } = await admin.auth.admin.generateLink({
+  type: "signup", email, password,
+  options: { redirectTo: "https://<本番ドメイン>/auth/confirm?next=/onboarding" },
+});
+console.log(data.properties.action_link);
+```
+
+`redirect_to` が本番ドメインになっていれば、URL Configuration は正しい。
+localhost になっていたら Site URL / Redirect URLs を見直す。
+
+#### 届かなかったときの導線
+
+アプリ側には**確認メールの再送**を用意してある。
+
+- 登録直後の画面 →「確認メールが届かない場合」
+- ログインで「メールアドレスの確認が完了していません」と出たとき
+
+送信の可否でアカウントの有無が分からないよう、結果に関わらず同じ文言を返す。
 
 ---
 
