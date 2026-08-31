@@ -1,8 +1,8 @@
 /**
  * 利用規約・プライバシーポリシーで使う運営情報。
  *
- * ⚠️ 公開前に必ず実際の値へ差し替えること。
- * 未記入のままだと、規約・ポリシーの画面に「未設定」と表示される。
+ * ここに書いた値は公開ページ（/terms・/privacy）にそのまま出る。
+ * App Store の審査でも、運営者と連絡先が読めることが求められる。
  */
 
 export const LEGAL = {
@@ -10,10 +10,10 @@ export const LEGAL = {
   serviceName: "StudyDash",
 
   /** 運営者。個人なら氏名または屋号、法人なら会社名 */
-  operator: "",
+  operator: "千代 茂樹（CHIYO SHIGEKI）",
 
   /** 問い合わせ先メールアドレス。開示請求や不具合報告の宛先になる */
-  contactEmail: "",
+  contactEmail: "bug.face.116@gmail.com",
 
   /** 規約・ポリシーの最終改定日（YYYY-MM-DD） */
   termsUpdatedAt: "2026-08-31",
