@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "verify:db": "node --env-file-if-exists=.env.local scripts/verify-acceptance.mjs",
     "icons": "node scripts/generate-icons.mjs",
-    "migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs"
+    "migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "migrate:prod": "node --env-file-if-exists=.env.production.local scripts/migrate.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

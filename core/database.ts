@@ -212,6 +212,33 @@ export type Database = {
         Args: Record<string, never>;
         Returns: PlanType;
       };
+      // タイマー操作。経過時間をサーバーの now() で確定させるため DB 側に置く
+      // （0004_study_session_rpc.sql）。呼び出し側は秒数を渡さない。
+      running_study_session: {
+        Args: Record<string, never>;
+        Returns: StudySession;
+      };
+      start_study_session: {
+        Args: { p_subject_id?: string | null };
+        Returns: StudySession;
+      };
+      pause_study_session: {
+        Args: Record<string, never>;
+        Returns: StudySession;
+      };
+      resume_study_session: {
+        Args: Record<string, never>;
+        Returns: StudySession;
+      };
+      finish_study_session: {
+        Args: Record<string, never>;
+        Returns: StudySession;
+      };
+      /** 表示補正のみに使う。確定値には使わない */
+      server_now: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
     };
     Enums: {
       school_type: SchoolType;

@@ -42,7 +42,10 @@ Phase 1〜7 まで完了。§12 A-01〜A-10 は実際の Supabase に接続し�
   「今日」「明日」はユーザーのタイムゾーンでの暦日で判定する（経過時間ではない）
 - Free 上限は必ず Server Action の中でも確認する。画面側の非表示だけに頼らない
 - タイマーの経過時間はサーバー側の時刻で確定させる。
-  クライアントから秒数を受け取らない（`src/lib/timer.ts`）
+  クライアントから秒数を受け取らない（計算は `core/timer.ts`）。
+  Web は Server Action の中の `new Date()` でよいが、iOS 版にその層は無い。
+  アプリからは `start/pause/resume/finish_study_session` を呼び、
+  時刻は DB の `now()` から採る（`0004_study_session_rpc.sql`）
 - `subscriptions` を書き換えてよいのは、署名検証を通った Webhook だけ
   （`src/lib/stripe/sync.ts`）。画面や通常の Server Action から書かない
 - 課金状態から権限を導く計算は `src/lib/billing.ts` に置く

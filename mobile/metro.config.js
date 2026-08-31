@@ -7,9 +7,9 @@ const coreRoot = path.resolve(repoRoot, "core");
 
 const config = getDefaultConfig(projectRoot);
 
-// web と mobile で同じロジックを使うため、リポジトリ直下の core/ を監視対象に含める。
-// これが無いと core/ を編集しても Fast Refresh が反応しない。
-config.watchFolders = [coreRoot];
+// web と mobile で同じロジックを使うため、リポジトリ直下の core/ を監視対象に加える。
+// 既定値を残したまま足す。上書きすると mobile 側の変更を拾わなくなる。
+config.watchFolders = [...(config.watchFolders ?? []), coreRoot];
 
 // node_modules は mobile 側を優先しつつ、ルートも辿れるようにする
 config.resolver.nodeModulesPaths = [
