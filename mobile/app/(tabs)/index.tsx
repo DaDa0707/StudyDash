@@ -1,3 +1,4 @@
+import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Text, View } from "react-native";
 
@@ -54,6 +55,13 @@ export default function HomeScreen() {
   }, []);
 
   const { data, error, refreshing, onRefresh, reload } = useQuery(fetcher);
+
+  // 課題や授業を足して戻ってきたときに取り直す
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload]),
+  );
 
   if (error) return <ErrorView message={error} onRetry={reload} />;
   if (!data) return <Loading />;

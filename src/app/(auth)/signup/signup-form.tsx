@@ -9,7 +9,7 @@ import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { signUpAction } from "@/lib/actions/auth";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 export function SignUpForm() {
   const [state, formAction] = useActionState(signUpAction, idleFormState);

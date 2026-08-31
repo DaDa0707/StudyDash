@@ -7,7 +7,7 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { deleteAssignmentAction } from "@/lib/actions/assignments";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 export function DeleteAssignmentButton({ assignmentId }: { assignmentId: string }) {
   const [state, formAction] = useActionState(deleteAssignmentAction, idleFormState);

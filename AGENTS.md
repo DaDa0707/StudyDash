@@ -68,6 +68,10 @@ supabase/   スキーマとマイグレーション（両方が同じ DB を使�
 **`core/` には React も Next.js も Supabase も持ち込まない。** ブラウザ専用 API
 （`window` / `localStorage`）も Node 専用 API（`process` / `require`）も使わない。
 どちらのプラットフォームからも同じコードが動くことが唯一の条件。
+外部依存は zod だけ（`core/validation/`）。増やすときはこの条件で判断する。
+
+入力の検証は `core/validation/` に置く。エラー文言もここに一本化し、
+web と iOS で同じものを出す。フォームの結果型は `core/form.ts`。
 
 参照は両方から `@core/xxx`。web は tsconfig の paths、mobile は
 `mobile/metro.config.js` の `resolveRequest` で解決する

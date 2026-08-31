@@ -8,7 +8,7 @@ import { useAnalytics } from "@/components/analytics/analytics-provider";
 import { FormMessage } from "@/components/form/form-message";
 import { Button } from "@/components/ui/button";
 import { openBillingPortalAction, startCheckoutAction } from "@/lib/actions/billing";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { cn } from "@/lib/utils";
 
 export interface PlanOption {

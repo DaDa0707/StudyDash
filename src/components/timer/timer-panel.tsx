@@ -14,7 +14,7 @@ import {
   resumeTimerAction,
   startTimerAction,
 } from "@/lib/actions/study";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { elapsedSeconds, formatTimerDisplay, subjectLabel, type TimerFields } from "@core/timer";
 import { useActionToast } from "@/lib/use-action-toast";
 import type { Subject } from "@core/database";

@@ -7,8 +7,8 @@ import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { createSubjectAction, updateSubjectAction } from "@/lib/actions/subjects";
-import { idleFormState } from "@/lib/form";
-import { SUBJECT_COLORS } from "@/lib/validation/timetable";
+import { idleFormState } from "@core/form";
+import { SUBJECT_COLORS } from "@core/validation/timetable";
 import type { Subject } from "@core/database";
 
 interface Props {

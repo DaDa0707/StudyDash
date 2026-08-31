@@ -1,6 +1,6 @@
 import { CircleAlert, CircleCheck } from "lucide-react";
 
-import type { FormState } from "@/lib/form";
+import type { FormState } from "@core/form";
 import { cn } from "@/lib/utils";
 
 /** Server Action の結果を表示する。エラーは role="alert" で読み上げる。 */

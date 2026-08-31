@@ -6,7 +6,7 @@ import { useFormStatus } from "react-dom";
 
 import { formatDuration } from "@core/date";
 import { deleteStudySessionAction } from "@/lib/actions/study";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { subjectLabel } from "@core/timer";
 import { useActionToast } from "@/lib/use-action-toast";
 

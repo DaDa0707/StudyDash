@@ -3,9 +3,9 @@
 import { redirect } from "next/navigation";
 
 import { APP_VERSION } from "@/lib/version";
-import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
+import { errorState, successState, toFieldErrors, type FormState } from "@core/form";
 import { createClient } from "@/lib/supabase/server";
-import { feedbackSchema } from "@/lib/validation/feedback";
+import { feedbackSchema } from "@core/validation/feedback";
 
 /** フィードバックの送信（§13 Phase 7 フィードバック導線） */
 export async function submitFeedbackAction(

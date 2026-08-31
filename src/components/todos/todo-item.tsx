@@ -6,7 +6,7 @@ import { useFormStatus } from "react-dom";
 
 import { DueBadge } from "@/components/assignments/due-badge";
 import { deleteTodoAction, toggleTodoAction } from "@/lib/actions/todos";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { useActionToast } from "@/lib/use-action-toast";
 import { cn } from "@/lib/utils";
 import type { Todo } from "@core/database";

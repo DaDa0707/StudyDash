@@ -8,9 +8,9 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Label } from "@/components/ui/label";
 import { submitFeedbackAction } from "@/lib/actions/feedback";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { cn } from "@/lib/utils";
-import { FEEDBACK_CATEGORIES } from "@/lib/validation/feedback";
+import { FEEDBACK_CATEGORIES } from "@core/validation/feedback";
 
 type Category = (typeof FEEDBACK_CATEGORIES)[number]["value"];
 

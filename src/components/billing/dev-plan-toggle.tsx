@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { toggleProForDevAction } from "@/lib/actions/billing";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 /**
  * 開発用のプラン切り替え。

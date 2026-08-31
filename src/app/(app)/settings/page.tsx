@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { isPro, limitsFor } from "@core/entitlements";
 import { createClient } from "@/lib/supabase/server";
-import { SCHOOL_TYPES } from "@/lib/validation/auth";
+import { SCHOOL_TYPES } from "@core/validation/auth";
 
 import { ProfileForm } from "./profile-form";
 

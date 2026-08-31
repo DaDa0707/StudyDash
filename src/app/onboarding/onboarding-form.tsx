@@ -6,8 +6,8 @@ import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { completeOnboardingAction } from "@/lib/actions/auth";
-import { idleFormState } from "@/lib/form";
-import { SCHOOL_TYPES } from "@/lib/validation/auth";
+import { idleFormState } from "@core/form";
+import { SCHOOL_TYPES } from "@core/validation/auth";
 import { cn } from "@/lib/utils";
 import type { SchoolType } from "@core/database";
 

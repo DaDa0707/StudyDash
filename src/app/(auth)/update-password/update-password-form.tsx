@@ -6,7 +6,7 @@ import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { updatePasswordAction } from "@/lib/actions/auth";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 export function UpdatePasswordForm() {
   const [state, formAction] = useActionState(updatePasswordAction, idleFormState);

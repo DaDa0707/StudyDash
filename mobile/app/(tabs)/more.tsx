@@ -48,6 +48,11 @@ export default function MoreScreen() {
           onPress={() => router.push("/todos")}
         />
         <Row
+          icon="book-outline"
+          label="科目"
+          onPress={() => router.push("/subjects")}
+        />
+        <Row
           icon="star-outline"
           label="Pro"
           note={isPro(data.entitlement) ? "利用中" : "未加入"}

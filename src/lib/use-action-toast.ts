@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-import type { FormState } from "@/lib/form";
+import type { FormState } from "@core/form";
 
 /**
  * 画面に表示欄を持たない操作（一覧のチェックボックスなど）の結果をトーストで伝える。

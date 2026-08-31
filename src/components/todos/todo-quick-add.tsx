@@ -8,7 +8,7 @@ import { useAnalytics } from "@/components/analytics/analytics-provider";
 import { FormMessage } from "@/components/form/form-message";
 import { Input } from "@/components/ui/input";
 import { createTodoAction } from "@/lib/actions/todos";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 function AddButton() {
   const { pending } = useFormStatus();

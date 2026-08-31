@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
+import { errorState, successState, toFieldErrors, type FormState } from "@core/form";
 import { createClient } from "@/lib/supabase/server";
-import { subjectSchema } from "@/lib/validation/timetable";
+import { subjectSchema } from "@core/validation/timetable";
 
 /** 科目の追加・更新・削除。時間割はどのプランでも上限なし（§6）。 */
 

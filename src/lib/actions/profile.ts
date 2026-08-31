@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
+import { errorState, successState, toFieldErrors, type FormState } from "@core/form";
 import { createClient } from "@/lib/supabase/server";
-import { onboardingSchema } from "@/lib/validation/auth";
+import { onboardingSchema } from "@core/validation/auth";
 
 /** 設定画面からの表示名・学校種別の更新 */
 export async function updateProfileAction(

@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import { useState } from "react";
 
-import { SUBJECT_COLORS } from "@/lib/validation/timetable";
+import { SUBJECT_COLORS } from "@core/validation/timetable";
 
 /** 科目の表示色を選ぶ（§5.1 表示色） */
 export function ColorPicker({ name, defaultValue }: { name: string; defaultValue: string }) {

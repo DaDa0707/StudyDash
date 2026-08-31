@@ -7,7 +7,7 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { deleteClassSessionAction } from "@/lib/actions/class-sessions";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 export function DeleteClassSessionButton({
   sessionId,

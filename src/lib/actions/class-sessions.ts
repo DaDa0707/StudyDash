@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { errorState, toFieldErrors, type FormState } from "@/lib/form";
+import { errorState, toFieldErrors, type FormState } from "@core/form";
 import { createClient } from "@/lib/supabase/server";
-import { classSessionSchema } from "@/lib/validation/timetable";
+import { classSessionSchema } from "@core/validation/timetable";
 
 /** 授業（時間割の1コマ）の追加・更新・削除（§5.1） */
 

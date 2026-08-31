@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { errorState, type FormState } from "@/lib/form";
+import { errorState, type FormState } from "@core/form";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 

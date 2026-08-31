@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { toggleAssignmentAction } from "@/lib/actions/assignments";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { useActionToast } from "@/lib/use-action-toast";
 import { cn } from "@/lib/utils";
 

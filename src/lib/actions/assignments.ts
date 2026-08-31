@@ -6,10 +6,10 @@ import { redirect } from "next/navigation";
 import { checkQuota, UPSELL_MESSAGES } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
 import { endOfDayInZone, zonedToUtc } from "@core/deadline";
-import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
+import { errorState, successState, toFieldErrors, type FormState } from "@core/form";
 import { countOpenAssignments } from "@/lib/queries/assignments";
 import { createClient } from "@/lib/supabase/server";
-import { assignmentSchema } from "@/lib/validation/assignments";
+import { assignmentSchema } from "@core/validation/assignments";
 
 /** 課題の追加・更新・完了・削除（§5.2 / A-03 / A-06） */
 

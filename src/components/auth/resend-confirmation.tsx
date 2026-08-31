@@ -7,7 +7,7 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { resendConfirmationAction } from "@/lib/actions/auth";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 /**
  * 確認メールの再送。

@@ -7,7 +7,7 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { deleteAccountAction } from "@/lib/actions/account";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 /** A-10 アカウント削除フロー。確認語の入力を求めてから実行する。 */
 export function DeleteAccountForm() {

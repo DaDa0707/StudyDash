@@ -11,7 +11,7 @@ import {
   updateAssignmentAction,
 } from "@/lib/actions/assignments";
 import { ASSIGNMENT_STATUSES, PRIORITIES } from "@core/assignments";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import type { AssignmentStatus, PriorityLevel, Subject } from "@core/database";
 
 interface Props {

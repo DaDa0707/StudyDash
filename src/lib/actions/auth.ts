@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 import { publicEnv } from "@/lib/env";
-import { errorState, successState, toFieldErrors, type FormState } from "@/lib/form";
+import { errorState, successState, toFieldErrors, type FormState } from "@core/form";
 import { createClient } from "@/lib/supabase/server";
 import {
   onboardingSchema,
@@ -13,7 +13,7 @@ import {
   signInSchema,
   signUpSchema,
   updatePasswordSchema,
-} from "@/lib/validation/auth";
+} from "@core/validation/auth";
 
 /**
  * Supabase が返す英語メッセージを日本語へ寄せる。

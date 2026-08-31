@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { limitOf } from "@core/entitlements";
 import { getEntitlement } from "@/lib/entitlements.server";
-import { errorState, successState, type FormState } from "@/lib/form";
+import { errorState, successState, type FormState } from "@core/form";
 import { clampReminderOffsets } from "@core/notifications";
 import { createClient } from "@/lib/supabase/server";
 

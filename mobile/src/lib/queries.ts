@@ -170,3 +170,56 @@ export async function getEntitlement(): Promise<Entitlement> {
     new Date(),
   );
 }
+
+/** 編集画面用に1件取得する */
+export async function getAssignment(id: string): Promise<AssignmentWithSubject | null> {
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("assignments")
+    .select("*, subject:subjects(id, name, color)")
+    .eq("user_id", userId)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) return null;
+  return (data as unknown as AssignmentWithSubject | null) ?? null;
+}
+
+export async function getClassSession(id: string): Promise<SessionWithSubject | null> {
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("class_sessions")
+    .select("*, subject:subjects(id, name, color)")
+    .eq("user_id", userId)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) return null;
+  return (data as unknown as SessionWithSubject | null) ?? null;
+}
+
+export async function getSubject(id: string): Promise<Subject | null> {
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("subjects")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) return null;
+  return data ?? null;
+}
+
+/** 上限判定に使う。未完了の課題だけを数える */
+export async function countOpenAssignments(): Promise<number> {
+  const userId = await requireUserId();
+  const { count, error } = await supabase
+    .from("assignments")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .neq("status", "done");
+
+  if (error) throw new Error("課題を読み込めませんでした");
+  return count ?? 0;
+}

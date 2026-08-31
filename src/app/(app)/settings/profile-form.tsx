@@ -6,9 +6,9 @@ import { Field } from "@/components/form/field";
 import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { updateProfileAction } from "@/lib/actions/profile";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import { cn } from "@/lib/utils";
-import { SCHOOL_TYPES } from "@/lib/validation/auth";
+import { SCHOOL_TYPES } from "@core/validation/auth";
 import type { SchoolType } from "@core/database";
 
 interface Props {

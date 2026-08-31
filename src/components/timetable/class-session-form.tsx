@@ -11,7 +11,7 @@ import {
   createClassSessionAction,
   updateClassSessionAction,
 } from "@/lib/actions/class-sessions";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 import {
   DEFAULT_PERIOD_TIMES,
   PERIODS,

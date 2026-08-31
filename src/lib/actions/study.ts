@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { errorState, successState, type FormState } from "@/lib/form";
+import { errorState, successState, type FormState } from "@core/form";
 import { createClient } from "@/lib/supabase/server";
 import { accumulatedOnPause, durationOnFinish, formatTimerDisplay } from "@core/timer";
 

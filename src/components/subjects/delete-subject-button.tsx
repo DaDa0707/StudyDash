@@ -7,7 +7,7 @@ import { FormMessage } from "@/components/form/form-message";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { deleteSubjectAction } from "@/lib/actions/subjects";
-import { idleFormState } from "@/lib/form";
+import { idleFormState } from "@core/form";
 
 /** 削除は取り消せないため、一度確認を挟む */
 export function DeleteSubjectButton({ subjectId }: { subjectId: string }) {
