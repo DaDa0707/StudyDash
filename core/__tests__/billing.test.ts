@@ -4,6 +4,7 @@ import {
   GRACE_DAYS,
   effectiveEntitlement,
   appleStatusFromNotification,
+  appleStatusFromTransaction,
   entitlementFromSubscription,
   normalizeAppleStatus,
   normalizeStripeStatus,
@@ -230,5 +231,40 @@ describe("appleStatusFromNotification", () => {
     expect(appleStatusFromNotification("TEST", undefined)).toBeNull();
     expect(appleStatusFromNotification("SOMETHING_NEW", undefined)).toBeNull();
     expect(appleStatusFromNotification(undefined, undefined)).toBeNull();
+  });
+});
+
+describe("appleStatusFromTransaction", () => {
+  const t = new Date("2026-09-02T00:00:00Z");
+
+  it("期限が先なら有効", () => {
+    const status = appleStatusFromTransaction(
+      { expiresDate: t.getTime() + 86_400_000, revocationDate: null },
+      t,
+    );
+    expect(status).toBe(1);
+    expect(entitlementFromSubscription(normalizeAppleStatus(status), null, t)).toBe("pro");
+  });
+
+  it("期限が過ぎていれば無効", () => {
+    const status = appleStatusFromTransaction(
+      { expiresDate: t.getTime() - 1, revocationDate: null },
+      t,
+    );
+    expect(status).toBe(2);
+    expect(entitlementFromSubscription(normalizeAppleStatus(status), null, t)).toBe("free");
+  });
+
+  it("返金されていれば、期限が先でも権限を与えない", () => {
+    const status = appleStatusFromTransaction(
+      { expiresDate: t.getTime() + 86_400_000, revocationDate: t.getTime() },
+      t,
+    );
+    expect(status).toBe(5);
+    expect(entitlementFromSubscription(normalizeAppleStatus(status), null, t)).toBe("free");
+  });
+
+  it("期限が分からないときは権限を与えない", () => {
+    expect(appleStatusFromTransaction({ expiresDate: null, revocationDate: null }, t)).toBe(2);
   });
 });

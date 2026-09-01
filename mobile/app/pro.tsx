@@ -1,31 +1,122 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Stack } from "expo-router";
-import { useCallback } from "react";
-import { Text, View } from "react-native";
+import { useIAP } from "expo-iap";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, Text, View } from "react-native";
 
-import { Card, ErrorView, Loading, Screen, SectionLabel } from "@/components/ui";
+import {
+  Card,
+  ErrorView,
+  Loading,
+  OutlineButton,
+  PrimaryButton,
+  Screen,
+  SectionLabel,
+} from "@/components/ui";
+import { verifyPurchaseOnServer } from "@/lib/iap";
 import { getEntitlement } from "@/lib/queries";
+import { supabase } from "@/lib/supabase";
 import { spacing, theme } from "@/lib/theme";
 import { useQuery } from "@/lib/use-query";
 import { isPro, planComparison, type Entitlement } from "@core/entitlements";
+import { PRO_MONTHLY_PRODUCT_ID } from "@core/products";
 
 /**
  * Web 版の (app)/pro に相当する画面。
  *
- * 購入の導線は置かない。
- * App Store の規約 3.1.1 は、アプリ内のデジタル商品について
- * App 内課金以外の購入手段へ誘導することを禁じている。
- * StoreKit を入れるまでは、何ができるかの説明だけにとどめる。
+ * 購入は App 内課金だけで行う。
+ * App Store の規約 3.1.1 が、デジタル商品について App 内課金以外の
+ * 購入手段へ誘導することを禁じているため、Web の決済ページは開かない。
+ *
+ * 金額はコードに書かない（§6）。App Store から取り出して表示する。
  */
 export default function ProScreen() {
   const fetcher = useCallback((): Promise<Entitlement> => getEntitlement(), []);
   const { data, error, refreshing, onRefresh, reload } = useQuery(fetcher);
+  const [busy, setBusy] = useState(false);
+
+  const {
+    connected,
+    subscriptions,
+    fetchProducts,
+    requestPurchase,
+    finishTransaction,
+    restorePurchases,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      try {
+        // 権限を与えてよいかはサーバーが決める。アプリは判断しない。
+        const applied = await verifyPurchaseOnServer(purchase.purchaseToken ?? "");
+
+        // 検証が通ってから取引を完了させる。通らなければ再試行の余地を残す。
+        if (applied) {
+          await finishTransaction({ purchase, isConsumable: false });
+          await reload();
+          Alert.alert("", "Pro をご利用いただけます。ありがとうございます。");
+        } else {
+          Alert.alert("", "購入の確認に時間がかかっています。しばらくしてお試しください。");
+        }
+      } catch {
+        Alert.alert("", "購入の確認に失敗しました。時間をおいてお試しください。");
+      }
+      setBusy(false);
+    },
+    onPurchaseError: (purchaseError) => {
+      setBusy(false);
+      // 利用者が自分でやめた場合は黙って戻す
+      if (purchaseError.code === "user-cancelled") return;
+      Alert.alert("", "購入を完了できませんでした。時間をおいてお試しください。");
+    },
+  });
+
+  useEffect(() => {
+    if (!connected) return;
+    fetchProducts({ skus: [PRO_MONTHLY_PRODUCT_ID], type: "subs" }).catch(() => {
+      // 取得できないときは価格を出さず、購入ボタンも出さない
+    });
+  }, [connected, fetchProducts]);
 
   if (error) return <ErrorView message={error} onRetry={reload} />;
   if (!data) return <Loading />;
 
   const pro = isPro(data);
   const rows = planComparison();
+  const product = subscriptions.find((s) => s.id === PRO_MONTHLY_PRODUCT_ID);
+
+  const onPurchase = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    setBusy(true);
+    try {
+      await requestPurchase({
+        type: "subs",
+        request: {
+          apple: {
+            sku: PRO_MONTHLY_PRODUCT_ID,
+            // これが Apple からの通知に載る。サーバーが利用者を特定するのに使う。
+            appAccountToken: user.id,
+          },
+        },
+      });
+    } catch {
+      setBusy(false);
+    }
+  };
+
+  const onRestore = async () => {
+    setBusy(true);
+    try {
+      await restorePurchases();
+      await reload();
+      Alert.alert("", "購入の復元を試みました。反映まで少しかかることがあります。");
+    } catch {
+      Alert.alert("", "復元できませんでした。時間をおいてお試しください。");
+    }
+    setBusy(false);
+  };
 
   return (
     <>
@@ -90,15 +181,35 @@ export default function ProScreen() {
           ))}
         </Card>
 
-        {!pro ? (
+        {pro ? null : product ? (
+          <View style={{ gap: spacing.md }}>
+            <Card style={{ alignItems: "center", gap: 4 }}>
+              {/* 金額は App Store から取り出したものをそのまま出す */}
+              <Text style={{ fontSize: 24, fontWeight: "700", color: theme.text }}>
+                {product.displayPrice}
+              </Text>
+              <Text style={{ fontSize: 13, color: theme.muted }}>月額・いつでも解約できます</Text>
+            </Card>
+
+            <PrimaryButton label="Proにする" busy={busy} onPress={onPurchase} />
+            <OutlineButton label="購入を復元する" busy={busy} onPress={onRestore} />
+
+            <Text
+              style={{ fontSize: 12, color: theme.muted, textAlign: "center", lineHeight: 18 }}
+            >
+              お支払いは Apple ID に請求されます。解約は iPhone の設定から行えます。
+            </Text>
+          </View>
+        ) : (
           <Card>
             <SectionLabel>お申し込みについて</SectionLabel>
             <Text style={{ marginTop: 8, fontSize: 14, color: theme.muted, lineHeight: 20 }}>
-              アプリからのお申し込みは準備中です。使えるようになりましたら、
-              この画面からお手続きいただけます。
+              {connected
+                ? "商品を読み込めませんでした。時間をおいてお試しください。"
+                : "App Store に接続しています。"}
             </Text>
           </Card>
-        ) : null}
+        )}
       </Screen>
     </>
   );

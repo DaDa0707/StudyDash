@@ -169,3 +169,23 @@ export function appleStatusFromNotification(
       return null;
   }
 }
+
+/**
+ * 取引そのものから購読状態を導く。
+ *
+ * 購入直後にアプリから送られてくる取引を検証したときに使う。
+ * Apple のサーバー通知は遅れることがあるので、待たずに反映するための経路。
+ * 戻り値は App Store Server API の status と同じ数値。
+ */
+export function appleStatusFromTransaction(
+  transaction: { expiresDate: number | null; revocationDate: number | null },
+  now: Date,
+): number {
+  // 返金・剥奪が最優先
+  if (transaction.revocationDate !== null) return 5; // REVOKED
+
+  // 期限が無い購読はありえないが、判断できないので権限を与えない側に倒す
+  if (transaction.expiresDate === null) return 2; // EXPIRED
+
+  return transaction.expiresDate > now.getTime() ? 1 : 2;
+}
