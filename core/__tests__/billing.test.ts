@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   GRACE_DAYS,
   effectiveEntitlement,
+  appleStatusFromNotification,
   entitlementFromSubscription,
   normalizeAppleStatus,
   normalizeStripeStatus,
@@ -189,5 +190,45 @@ describe("normalizeAppleStatus", () => {
     expect(normalizeAppleStatus(0)).toBeNull();
     expect(normalizeAppleStatus(99)).toBeNull();
     expect(entitlementFromSubscription(null, null, new Date())).toBe("free");
+  });
+});
+
+describe("appleStatusFromNotification", () => {
+  const proAfter = (type: string, subtype?: string) => {
+    const status = appleStatusFromNotification(type, subtype);
+    if (status === null) return null;
+    return entitlementFromSubscription(normalizeAppleStatus(status), null, new Date());
+  };
+
+  it("購読の開始と更新では Pro になる", () => {
+    for (const type of ["SUBSCRIBED", "DID_RENEW", "OFFER_REDEEMED", "RENEWAL_EXTENDED"]) {
+      expect(proAfter(type)).toBe("pro");
+    }
+  });
+
+  it("期限切れ・返金・剥奪では Pro が外れる", () => {
+    for (const type of ["EXPIRED", "GRACE_PERIOD_EXPIRED", "REFUND", "REVOKE"]) {
+      expect(proAfter(type)).toBe("free");
+    }
+  });
+
+  it("更新に失敗しても、猶予期間中は Pro が残る", () => {
+    expect(appleStatusFromNotification("DID_FAIL_TO_RENEW", "GRACE_PERIOD")).toBe(4);
+    expect(proAfter("DID_FAIL_TO_RENEW", "GRACE_PERIOD")).toBe("pro");
+  });
+
+  it("更新に失敗して再試行中も、いったんは Pro を残す", () => {
+    expect(appleStatusFromNotification("DID_FAIL_TO_RENEW", undefined)).toBe(3);
+    expect(proAfter("DID_FAIL_TO_RENEW")).toBe("pro");
+  });
+
+  it("自動更新を切っても、期間内は Pro のまま", () => {
+    expect(proAfter("DID_CHANGE_RENEWAL_STATUS", "AUTO_RENEW_DISABLED")).toBe("pro");
+  });
+
+  it("TEST や未知の通知では状態を変えない", () => {
+    expect(appleStatusFromNotification("TEST", undefined)).toBeNull();
+    expect(appleStatusFromNotification("SOMETHING_NEW", undefined)).toBeNull();
+    expect(appleStatusFromNotification(undefined, undefined)).toBeNull();
   });
 });

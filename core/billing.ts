@@ -125,3 +125,47 @@ export function normalizeAppleStatus(status: number): SubscriptionStatus | null 
       return null;
   }
 }
+
+/**
+ * App Store のサーバー通知から購読状態を導く。
+ *
+ * 通知には status が載らないので、種類と subtype から決める。
+ * 戻り値は App Store Server API の status と同じ数値
+ * （normalizeAppleStatus にそのまま渡せる）。
+ * 状態を変えるべきでない通知（TEST など）は null を返す。
+ */
+export function appleStatusFromNotification(
+  notificationType: string | undefined,
+  subtype: string | undefined,
+): number | null {
+  switch (notificationType) {
+    case "SUBSCRIBED":
+    case "DID_RENEW":
+    case "OFFER_REDEEMED":
+    case "RENEWAL_EXTENDED":
+      return 1; // ACTIVE
+
+    case "DID_CHANGE_RENEWAL_PREF":
+    case "DID_CHANGE_RENEWAL_STATUS":
+    case "PRICE_INCREASE":
+    case "METADATA_UPDATE":
+      // 自動更新の入切や内容の変更。期間内はまだ使える。
+      return 1;
+
+    case "DID_FAIL_TO_RENEW":
+      // 猶予期間なら使えるが、そうでなければ再試行中
+      return subtype === "GRACE_PERIOD" ? 4 : 3;
+
+    case "EXPIRED":
+    case "GRACE_PERIOD_EXPIRED":
+      return 2; // EXPIRED
+
+    case "REFUND":
+    case "REVOKE":
+      return 5; // REVOKED
+
+    default:
+      // TEST や未知の種類では状態を触らない
+      return null;
+  }
+}
