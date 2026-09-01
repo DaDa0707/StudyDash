@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   const nextParam = searchParams.get("next");
   // 自サイト内の絶対パスのみ許可（オープンリダイレクト防止）
-  const next = nextParam && /^\/(?!\/)/.test(nextParam) ? nextParam : "/home";
+  const next = nextParam && /^\/(?!\/)/.test(nextParam) ? nextParam : "/?confirmed=1";
 
   const supabase = await createClient();
 
@@ -29,5 +29,5 @@ export async function GET(request: NextRequest) {
     if (!error) redirect(next);
   }
 
-  redirect("/login?error=link_invalid");
+  redirect("/?error=link_invalid");
 }

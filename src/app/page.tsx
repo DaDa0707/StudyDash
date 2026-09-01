@@ -1,11 +1,17 @@
 import { CalendarDays, ListChecks, Timer } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { Button } from "@/components/ui/button";
-import { isSupabaseConfigured } from "@/lib/env";
-import { createClient } from "@/lib/supabase/server";
+import { APP_STORE_URL } from "@/lib/app-links";
+
+/**
+ * 紹介ページ。
+ *
+ * StudyDash は App Store 経由の iOS / iPad アプリとしてのみ配布する。
+ * ブラウザで使う画面は用意しない。ここに残すのは、アプリの紹介と、
+ * 規約・プライバシーポリシーへの導線、それにメールのリンクから
+ * 戻ってきた人へのお知らせだけ。
+ */
 
 const FEATURES = [
   {
@@ -25,36 +31,37 @@ const FEATURES = [
   },
 ];
 
+function single(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export default async function LandingPage({ searchParams }: PageProps<"/">) {
   const params = await searchParams;
-  // アカウント削除後の戻り先（deleteAccountAction）
-  const justDeleted = (Array.isArray(params.deleted) ? params.deleted[0] : params.deleted) === "1";
+  const deleted = single(params.deleted) === "1";
+  const confirmed = single(params.confirmed) === "1";
+  const linkInvalid = single(params.error) === "link_invalid";
 
-  // 設定前でもトップページは表示できるようにする（セットアップ手順は README を参照）
-  if (isSupabaseConfigured) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) redirect("/home");
-  }
+  const notice = deleted
+    ? "アカウントを削除しました。ご利用ありがとうございました。"
+    : confirmed
+      ? "メールアドレスを確認しました。アプリに戻ってログインしてください。"
+      : linkInvalid
+        ? "リンクの有効期限が切れています。アプリからもう一度お試しください。"
+        : null;
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-5 py-6">
       <header className="flex items-center justify-between">
         <span className="text-lg font-bold tracking-tight">StudyDash</span>
-        <Button render={<Link href="/login" />} nativeButton={false} variant="ghost" size="lg">
-          ログイン
-        </Button>
       </header>
 
       <main className="flex flex-1 flex-col justify-center py-12">
-        {justDeleted ? (
+        {notice ? (
           <p
             role="status"
             className="mb-6 rounded-lg bg-muted px-3 py-2.5 text-sm text-muted-foreground"
           >
-            アカウントを削除しました。ご利用ありがとうございました。
+            {notice}
           </p>
         ) : null}
 
@@ -68,14 +75,18 @@ export default async function LandingPage({ searchParams }: PageProps<"/">) {
         </p>
 
         <div className="mt-8">
-          <Button
-            render={<Link href="/signup" />}
-            nativeButton={false}
-            size="lg"
-            className="h-12 w-full text-base sm:w-auto sm:px-8"
-          >
-            無料で始める
-          </Button>
+          {APP_STORE_URL ? (
+            <a
+              href={APP_STORE_URL}
+              className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-base font-medium text-primary-foreground"
+            >
+              App Store で入手
+            </a>
+          ) : (
+            <p className="rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground">
+              iPhone・iPad 向けアプリを準備中です。
+            </p>
+          )}
           <p className="mt-2.5 text-xs text-muted-foreground">
             時間割・課題・Todo・タイマーは無料で使えます。
           </p>
