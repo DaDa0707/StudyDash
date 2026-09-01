@@ -34,6 +34,8 @@ export default function ProScreen() {
   const fetcher = useCallback((): Promise<Entitlement> => getEntitlement(), []);
   const { data, error, refreshing, onRefresh, reload } = useQuery(fetcher);
   const [busy, setBusy] = useState(false);
+  // 商品が取れない理由を画面に出す。黙って「準備中」にすると原因が追えない。
+  const [productError, setProductError] = useState<string | null>(null);
 
   const {
     connected,
@@ -71,9 +73,14 @@ export default function ProScreen() {
 
   useEffect(() => {
     if (!connected) return;
-    fetchProducts({ skus: [PRO_MONTHLY_PRODUCT_ID], type: "subs" }).catch(() => {
-      // 取得できないときは価格を出さず、購入ボタンも出さない
-    });
+    setProductError(null);
+    fetchProducts({ skus: [PRO_MONTHLY_PRODUCT_ID], type: "subs" }).catch(
+      (cause: unknown) => {
+        // 取得できないときは価格を出さず、購入ボタンも出さない。
+        // 理由は画面に出す（商品未登録・StoreKit 設定未適用などを切り分けるため）。
+        setProductError(cause instanceof Error ? cause.message : String(cause));
+      },
+    );
   }, [connected, fetchProducts]);
 
   if (error) return <ErrorView message={error} onRetry={reload} />;
@@ -208,6 +215,11 @@ export default function ProScreen() {
                 ? "商品を読み込めませんでした。時間をおいてお試しください。"
                 : "App Store に接続しています。"}
             </Text>
+            {productError ? (
+              <Text style={{ marginTop: 6, fontSize: 12, color: theme.muted }}>
+                {productError}
+              </Text>
+            ) : null}
           </Card>
         )}
       </Screen>
