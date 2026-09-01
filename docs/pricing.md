@@ -30,11 +30,32 @@ StudyDash は App Store 経由のアプリとしてのみ配布するため、
 商品 ID は `core/products.ts` が持つ。App Store Connect と
 `mobile/StudyDash.storekit` で同じ値を使うこと。
 
+## App 内課金の作り
+
+    アプリ            購入する。判断はしない
+      ↓ 署名済みの取引
+    /api/apple/verify  購入直後の反映（通知を待たない）
+    /api/apple/notifications  更新・解約・返金
+      ↓ 署名検証を通ったものだけ
+    subscriptions      service_role でのみ書き込む
+      ↓
+    core/billing.ts    状態から権限を導く
+
+**アプリは「買えたから Pro にする」という判断をしない。** Apple が署名した
+取引をサーバーへ渡すだけで、権限を与えてよいかはサーバーが決める。
+検証が通ってから finishTransaction を呼ぶので、通らなければ取引はキューに
+残り再試行できる。順序を逆にすると「払ったのに Pro にならず取引も消えた」
+という状態になる。
+
+利用者の特定は appAccountToken（購入時にアプリが user_id を入れる）。
+それが載らない更新通知のためには originalTransactionId でも引ける。
+
 ## まだできていないこと
 
-- **App 内課金が未実装。** `subscriptions.provider` に `'apple'` は用意してあり、
-  状態の変換（`core/billing.ts` の `normalizeAppleStatus`）まではできている。
-  残るのは StoreKit の組み込みと、購入を検証して `subscriptions` へ書き込む経路。
-  書き込んでよいのは署名検証を通った通知だけにする（§14.1）
+- **App Store Connect への登録。** アプリとサブスクリプションを作らないと
+  Sandbox での確認ができない。ローカルの StoreKit 設定では購入画面までしか
+  試せない（そこで出る署名は Apple のものではないため、サーバー検証は通らない）
+- **Vercel の環境変数。** `APPLE_BUNDLE_ID` が無いと受け口が 503 を返す
+- **小規模事業者プログラムの申請**（手数料 30% → 15%）
 
 Free 上限の DB 側での強制は済んだ（`0005_free_limits.sql`）。

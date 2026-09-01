@@ -25,7 +25,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 それに Supabase が送るメールのリンクが着地する場所だけ。
 
 Phase 1〜7 まで完了。DB 層の自動検証は `npm run verify:db`。
-未実装は App 内課金とプッシュ通知の配信。
+未実装はプッシュ通知の配信。App 内課金はコードは通っているが、
+App Store Connect への登録と Sandbox での確認が残っている。
 
 ## 守るべきルール（§14.1）
 
@@ -55,6 +56,9 @@ Phase 1〜7 まで完了。DB 層の自動検証は `npm run verify:db`。
   RLS に書き込みポリシーは無く、アプリからは書けない（意図どおり）。
   課金は App 内課金の一本のみ。Web での決済は行わない
 - **iOS では App 内課金以外の購入手段へ誘導しない**（App Store 規約 3.1.1）
+- **アプリは購入の可否を判断しない。** Apple が署名した取引をサーバーへ渡し、
+  権限を与えてよいかはサーバーだけが決める。検証が通ってから
+  finishTransaction を呼ぶ（逆にすると払ったのに反映されない事故になる）
 - 課金状態から権限を導く計算は `core/billing.ts` に置く
 - スキーマ変更は `npm run migrate` で適用する（`SUPABASE_DB_URL` が必要）
 - **計測に利用者が書いた文章を混ぜない。** イベントは `core/analytics.ts` の
