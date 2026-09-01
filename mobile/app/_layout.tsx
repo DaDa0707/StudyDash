@@ -33,7 +33,11 @@ export default function RootLayout() {
   useEffect(() => {
     if (!ready) return;
 
-    const onAuthScreen = segments[0] === "login";
+    // ログイン前に見せてよい画面。ここに無いものはログインへ戻す。
+    const onAuthScreen =
+      segments[0] === "login" ||
+      segments[0] === "signup" ||
+      segments[0] === "reset-password";
 
     if (!session && !onAuthScreen) {
       router.replace("/login");

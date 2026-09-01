@@ -1,10 +1,13 @@
 import { supabase } from "@/lib/supabase";
 import { effectiveEntitlement } from "@core/billing";
-import type { Entitlement } from "@core/entitlements";
+import { startOfDaysAgo } from "@core/deadline";
+import { limitOf, type Entitlement } from "@core/entitlements";
 import type { SessionWithSubject } from "@core/timetable";
 import type {
   Assignment,
   ClassSession,
+  NotificationSettings,
+  SchoolType,
   StudySession,
   Subject,
   Todo,
@@ -24,6 +27,7 @@ export type AssignmentWithSubject = Assignment & {
 export interface Profile {
   displayName: string;
   timezone: string;
+  schoolType: SchoolType;
 }
 
 async function requireUserId(): Promise<string> {
@@ -44,7 +48,7 @@ export async function getProfile(): Promise<Profile> {
   const userId = await requireUserId();
   const { data, error } = await supabase
     .from("profiles")
-    .select("display_name, timezone")
+    .select("display_name, timezone, school_type")
     .eq("id", userId)
     .maybeSingle();
 
@@ -52,6 +56,7 @@ export async function getProfile(): Promise<Profile> {
   return {
     displayName: data?.display_name ?? "ゲスト",
     timezone: data?.timezone ?? "Asia/Tokyo",
+    schoolType: data?.school_type ?? "other",
   };
 }
 
@@ -222,4 +227,51 @@ export async function countOpenAssignments(): Promise<number> {
 
   if (error) throw new Error("課題を読み込めませんでした");
   return count ?? 0;
+}
+
+/** 通知の設定。行は登録時に作られる（handle_new_user） */
+export async function getNotificationSettings(): Promise<NotificationSettings | null> {
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) throw new Error("通知の設定を読み込めませんでした");
+  return data ?? null;
+}
+
+export type StudySessionWithSubject = StudySession & {
+  subject: Pick<Subject, "id" | "name" | "color"> | null;
+};
+
+/**
+ * 学習履歴を取得する。
+ *
+ * §6: Free は直近7日、Pro は全期間。
+ * 期間の上限は core/entitlements.ts が決め、ここは受け取った日数で絞るだけ。
+ */
+export async function listStudyHistory(
+  entitlement: Entitlement,
+  now: Date,
+  timeZone: string,
+): Promise<StudySessionWithSubject[]> {
+  const userId = await requireUserId();
+
+  let query = supabase
+    .from("study_sessions")
+    .select("*, subject:subjects(id, name, color)")
+    .eq("user_id", userId)
+    .not("ended_at", "is", null)
+    .order("started_at", { ascending: false });
+
+  const days = limitOf(entitlement, "studyHistoryDays");
+  if (days !== null) {
+    query = query.gte("started_at", startOfDaysAgo(now, timeZone, days).toISOString());
+  }
+
+  const { data, error } = await query;
+  if (error) throw new Error("学習履歴を読み込めませんでした");
+  return (data ?? []) as unknown as StudySessionWithSubject[];
 }

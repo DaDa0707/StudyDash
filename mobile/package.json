@@ -9,6 +9,8 @@
     "@supabase/supabase-js": "^2.112.4",
     "expo": "~57.0.18",
     "expo-constants": "~57.0.16",
+    "expo-dev-client": "~57.0.16",
+    "expo-iap": "^5.5.0",
     "expo-linking": "~57.0.8",
     "expo-router": "~57.0.17",
     "expo-status-bar": "~57.0.1",

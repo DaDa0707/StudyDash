@@ -5,3 +5,8 @@ web-build/
 *.log
 .env
 .env.local
+
+# prebuild が生成するネイティブプロジェクト。
+# 生成物なのでコミットしない（app.json と config plugin が正）。
+/ios
+/android

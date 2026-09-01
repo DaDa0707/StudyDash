@@ -75,6 +75,8 @@ export function TextField({
   multiline,
   maxLength,
   placeholder,
+  secure,
+  email,
 }: {
   label: string;
   value: string;
@@ -85,6 +87,10 @@ export function TextField({
   multiline?: boolean;
   maxLength?: number;
   placeholder?: string;
+  /** パスワード欄。伏せ字にし、自動大文字化と自動修正を切る */
+  secure?: boolean;
+  /** メールアドレス欄。専用キーボードを出す */
+  email?: boolean;
 }) {
   return (
     <Field label={label} required={required} error={error} hint={hint}>
@@ -95,6 +101,12 @@ export function TextField({
         placeholderTextColor={theme.muted}
         multiline={multiline}
         maxLength={maxLength}
+        secureTextEntry={secure}
+        keyboardType={email ? "email-address" : "default"}
+        autoCapitalize={secure || email ? "none" : "sentences"}
+        autoCorrect={!(secure || email)}
+        autoComplete={secure ? "current-password" : email ? "email" : undefined}
+        textContentType={secure ? "password" : email ? "emailAddress" : undefined}
         textAlignVertical={multiline ? "top" : "center"}
         style={{
           minHeight: multiline ? 96 : 48,

@@ -3,6 +3,7 @@ import { endOfDayInZone, zonedToUtc } from "@core/deadline";
 import type {
   AssignmentStatus,
   PriorityLevel,
+  SchoolType,
   StudySession,
 } from "@core/database";
 
@@ -332,4 +333,84 @@ export async function updateSubject(id: string, values: SubjectValues): Promise<
 export async function deleteSubject(id: string): Promise<void> {
   const { error } = await supabase.from("subjects").delete().eq("id", id);
   if (error) fail(error, "科目を削除できませんでした");
+}
+
+/**
+ * 学習履歴から1件削除する。
+ * ended_at が null の行（実行中のタイマー）はこの経路では消せない。
+ * 破棄は discardTimer が担当する。
+ */
+export async function deleteStudySession(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("study_sessions")
+    .delete()
+    .eq("id", id)
+    .not("ended_at", "is", null);
+  if (error) fail(error, "削除できませんでした");
+}
+
+// ── プロフィール・通知・アカウント ────────────────────────
+
+export async function updateProfile(values: {
+  displayName: string;
+  schoolType: SchoolType;
+}): Promise<void> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) fail(null, "ログインが必要です");
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ display_name: values.displayName, school_type: values.schoolType })
+    .eq("id", user.id);
+
+  if (error) fail(error, "保存できませんでした。時間をおいてお試しください");
+}
+
+export interface NotificationValues {
+  assignmentReminders: boolean;
+  reminderOffsetsMin: number[];
+  quietHoursEnabled: boolean;
+  quietHoursStart: string;
+  quietHoursEnd: string;
+}
+
+/**
+ * 通知の設定。
+ * 通知タイミングの件数は Free と Pro で違うので、
+ * 呼ぶ前に core/notifications.ts の clampReminderOffsets を通しておく。
+ */
+export async function updateNotificationSettings(
+  values: NotificationValues,
+): Promise<void> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) fail(null, "ログインが必要です");
+
+  const { error } = await supabase
+    .from("notification_settings")
+    .update({
+      assignment_reminders: values.assignmentReminders,
+      reminder_offsets_min: values.reminderOffsetsMin,
+      quiet_hours_enabled: values.quietHoursEnabled,
+      quiet_hours_start: values.quietHoursStart,
+      quiet_hours_end: values.quietHoursEnd,
+    })
+    .eq("user_id", user.id);
+
+  if (error) fail(error, "保存できませんでした。時間をおいてお試しください");
+}
+
+/**
+ * 退会。
+ *
+ * auth.users の削除は service_role でしかできないが、その鍵はアプリに置けない。
+ * 自分の行だけを消す DB 関数を呼ぶ（0006_delete_own_account.sql）。
+ */
+export async function deleteOwnAccount(): Promise<void> {
+  const { error } = await supabase.rpc("delete_own_account");
+  if (error) fail(error, "削除できませんでした。時間をおいてお試しください");
+  await supabase.auth.signOut();
 }

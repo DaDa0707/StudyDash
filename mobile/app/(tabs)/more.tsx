@@ -53,11 +53,24 @@ export default function MoreScreen() {
           onPress={() => router.push("/subjects")}
         />
         <Row
+          icon="bar-chart-outline"
+          label="分析"
+          onPress={() => router.push("/analytics")}
+        />
+        <Row
+          icon="settings-outline"
+          label="設定"
+          onPress={() => router.push("/settings")}
+        />
+        {/*
+          Web の決済ページは開かない。App Store の規約 3.1.1 が、
+          デジタル商品について App 内課金以外への誘導を禁じているため。
+        */}
+        <Row
           icon="star-outline"
           label="Pro"
           note={isPro(data.entitlement) ? "利用中" : "未加入"}
-          onPress={() => Linking.openURL(`${SITE_URL}/pro`)}
-          external
+          onPress={() => router.push("/pro")}
         />
       </Card>
 
