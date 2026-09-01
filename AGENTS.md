@@ -20,9 +20,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 仕様書 §13 のフェーズ単位で実装する。各フェーズで「実装 → テスト → 動作確認 → コミット」を
 完了してから次へ進む。**指示なく次のフェーズへ進まないこと。**
 
-Phase 1〜7 まで完了。§12 A-01〜A-10 は実際の Supabase に接続して確認済み
-（記録は `docs/acceptance.md`）。DB 層の自動検証は `npm run verify:db`。
-本番デプロイは未実施（手順は `docs/deploy.md`）。
+**StudyDash は App Store 経由の iOS / iPad アプリとしてのみ配布する。**
+ブラウザで使う画面は作らない。`src/` に残しているのは紹介ページと規約、
+それに Supabase が送るメールのリンクが着地する場所だけ。
+
+Phase 1〜7 まで完了。DB 層の自動検証は `npm run verify:db`。
+未実装は App 内課金とプッシュ通知の配信。
 
 ## 守るべきルール（§14.1）
 
@@ -31,39 +34,49 @@ Phase 1〜7 まで完了。§12 A-01〜A-10 は実際の Supabase に接続し�
   `src/lib/supabase/admin.ts` からのみ使う
 - `.env.example` を更新し、実値はコミットしない
 - スキーマ変更は `supabase/migrations/` にマイグレーションを追加し、
-  `src/types/database.ts` も合わせて更新する
+  `core/database.ts` も合わせて更新する
 - 主要なビジネスロジックにはテストを付ける（`npm test`）
-- 画面追加時はモバイル幅（390px）を先に確認する。横スクロールを出さない（A-08）
-- **Pro 判定は `src/lib/entitlements.ts` だけに書く。**
+- **Pro 判定は `core/entitlements.ts` だけに書く。**
   画面側で `plan === "pro"` のような比較を書かない
-- 時間割の計算（次の授業・重複判定）は `src/lib/timetable.ts` に置く。
+- 時間割の計算（次の授業・重複判定）は `core/timetable.ts` に置く。
   曜日は 1=月 … 7=日（ISO-8601 準拠）で統一する
-- 日付・締切の計算は `src/lib/deadline.ts` に置く。
+- 日付・締切の計算は `core/deadline.ts` に置く。
   「今日」「明日」はユーザーのタイムゾーンでの暦日で判定する（経過時間ではない）
-- Free 上限は必ず Server Action の中でも確認する。画面側の非表示だけに頼らない
+- Free 上限は画面・書き込み処理・DB の3か所で確認する。
+  上限値の正は `core/entitlements.ts`。DB 側は `plan_limit()` がその写しを持ち、
+  トリガーが件数を止める（`0005_free_limits.sql`）。
+  ズレは `npm run verify:db` が突き合わせて検出する
 - タイマーの経過時間はサーバー側の時刻で確定させる。
   クライアントから秒数を受け取らない（計算は `core/timer.ts`）。
   Web は Server Action の中の `new Date()` でよいが、iOS 版にその層は無い。
   アプリからは `start/pause/resume/finish_study_session` を呼び、
   時刻は DB の `now()` から採る（`0004_study_session_rpc.sql`）
-- `subscriptions` を書き換えてよいのは、署名検証を通った Webhook だけ
-  （`src/lib/stripe/sync.ts`）。画面や通常の Server Action から書かない
-- 課金状態から権限を導く計算は `src/lib/billing.ts` に置く
-- サービスワーカーはページや API をキャッシュしない。
-  古い締切を見せないため、オフライン時の案内だけを担う
-- PWA アイコンは `npm run icons` で再生成する
+- **`subscriptions` を書き換えてよいのは、署名検証を通ったサーバー側の経路だけ。**
+  RLS に書き込みポリシーは無く、アプリからは書けない（意図どおり）。
+  課金は App 内課金の一本のみ。Web での決済は行わない
+- **iOS では App 内課金以外の購入手段へ誘導しない**（App Store 規約 3.1.1）
+- 課金状態から権限を導く計算は `core/billing.ts` に置く
 - スキーマ変更は `npm run migrate` で適用する（`SUPABASE_DB_URL` が必要）
-- **計測に利用者が書いた文章を混ぜない。** イベントは `src/lib/analytics.ts` の
+- **計測に利用者が書いた文章を混ぜない。** イベントは `core/analytics.ts` の
   `ANALYTICS_EVENTS` に足し、値は `ALLOWED_STRING_VALUES` を通るものだけにする
 
 ## 構成
 
 ```
-core/       web と mobile が共有する純粋ロジック（＋テスト）
-src/        Web 版（Next.js）
-mobile/     iOS 版（Expo / React Native）
-supabase/   スキーマとマイグレーション（両方が同じ DB を使う）
+core/       アプリと Web が共有する純粋ロジック（＋テスト）
+mobile/     iOS / iPad アプリ（Expo / React Native）— 製品の本体
+src/        紹介ページ・規約・メールのリンク着地点だけの Next.js
+supabase/   スキーマとマイグレーション
 ```
+
+`src/` に残っているルートは5つだけ。増やさないこと。
+
+| ルート | 役目 |
+|---|---|
+| `/` | 紹介と App Store への導線 |
+| `/terms`・`/privacy` | 規約とプライバシーポリシー（審査に必須） |
+| `/auth/confirm` | メール確認・再設定リンクの着地点 |
+| `/update-password` | 再設定メールから新しいパスワードを入れる |
 
 **`core/` には React も Next.js も Supabase も持ち込まない。** ブラウザ専用 API
 （`window` / `localStorage`）も Node 専用 API（`process` / `require`）も使わない。

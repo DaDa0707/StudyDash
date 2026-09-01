@@ -92,3 +92,36 @@ export function normalizeStripeStatus(status: string): SubscriptionStatus | null
   // incomplete_expired / paused など。権限は与えない側に倒す。
   return status === "incomplete_expired" ? "incomplete" : null;
 }
+
+/**
+ * Apple の購読状態を DB の enum に落とす。
+ *
+ * 引数は App Store Server API の status（1〜5）。
+ * ライブラリの enum をそのまま受けず数値で取るのは、
+ * core/ に Node 専用の依存を持ち込まないため。
+ *
+ *   1 ACTIVE                → active
+ *   2 EXPIRED               → canceled
+ *   3 BILLING_RETRY         → past_due（決済再試行中。権限は残す）
+ *   4 BILLING_GRACE_PERIOD  → past_due（猶予期間。権限は残す）
+ *   5 REVOKED               → canceled（返金・剥奪）
+ *
+ * 無料試用中かどうかは status では分からない（renewalInfo の offerType に出る）。
+ * ここでは active として扱い、trialing は使わない。
+ */
+export function normalizeAppleStatus(status: number): SubscriptionStatus | null {
+  switch (status) {
+    case 1:
+      return "active";
+    case 2:
+      return "canceled";
+    case 3:
+    case 4:
+      return "past_due";
+    case 5:
+      return "canceled";
+    default:
+      // 未知の値は権限を与えない側に倒す
+      return null;
+  }
+}

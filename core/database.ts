@@ -239,6 +239,16 @@ export type Database = {
         Args: Record<string, never>;
         Returns: string;
       };
+      /** 件数上限。null は上限なし（0005_free_limits.sql） */
+      plan_limit: {
+        Args: { p_entitlement: PlanType; p_feature: string };
+        Returns: number | null;
+      };
+      /** 自分のアカウントを削除する（0006_delete_own_account.sql） */
+      delete_own_account: {
+        Args: Record<string, never>;
+        Returns: void;
+      };
     };
     Enums: {
       school_type: SchoolType;

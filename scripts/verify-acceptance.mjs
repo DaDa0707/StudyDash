@@ -6,6 +6,7 @@
  *
  * 検証するもの:
  *   A-01  登録でプロフィール等の付随レコードが作られる（handle_new_user）
+ *   A-06  Free の上限が DB 側で守られる（トリガーが件数を止める）
  *   A-07  Pro 権限が DB 側で守られる（本人が entitlement を書き換えられない）
  *   A-09  別ユーザーのデータへアクセスできない（RLS）
  *   A-10  アカウント削除で作成データが消える（ON DELETE CASCADE）
@@ -17,6 +18,9 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
+
+// 上限値の正は core。DB 側の写しとズレていないかを突き合わせるために読む。
+import { PLAN_LIMITS } from "../core/entitlements.ts";
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -359,6 +363,91 @@ try {
   });
 
   // -------------------------------------------------------------------------
+  group("A-06 Free の上限が DB 側で守られる");
+  // -------------------------------------------------------------------------
+  await check("DB の上限値が core/entitlements.ts と一致する", async () => {
+    const pairs = [
+      ["openAssignments", PLAN_LIMITS.free.openAssignments],
+      ["openTodos", PLAN_LIMITS.free.openTodos],
+    ];
+
+    for (const [feature, expected] of pairs) {
+      const { data, error } = await admin.rpc("plan_limit", {
+        p_entitlement: "free",
+        p_feature: feature,
+      });
+      assert(!error, `plan_limit の呼び出しに失敗: ${error?.message}`);
+      assert(data === expected, `${feature}: DB は ${data} だが core は ${expected}`);
+    }
+
+    const { data: proLimit } = await admin.rpc("plan_limit", {
+      p_entitlement: "pro",
+      p_feature: "openAssignments",
+    });
+    assert(proLimit === null, `Pro に上限が設定されています: ${proLimit}`);
+
+    return `free: 課題${PLAN_LIMITS.free.openAssignments}件 / Todo${PLAN_LIMITS.free.openTodos}件、pro: 上限なし`;
+  });
+
+  await check("未完了 Todo が上限を超えて作れない", async () => {
+    const limit = PLAN_LIMITS.free.openTodos;
+
+    const filler = Array.from({ length: limit }, (_, index) => ({
+      user_id: userB.id,
+      title: `上限検証 ${index + 1}`,
+    }));
+    const { error: fillError } = await userB.client.from("todos").insert(filler);
+    assert(!fillError, `上限までの作成に失敗: ${fillError?.message}`);
+
+    const { error } = await userB.client
+      .from("todos")
+      .insert({ user_id: userB.id, title: "上限を超える1件" });
+    assert(error, "上限を超えて作成できてしまいました");
+
+    const { count } = await userB.client
+      .from("todos")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userB.id)
+      .neq("status", "done");
+    assert(count === limit, `件数が ${count} 件になっています`);
+
+    return `${limit}件で打ち止め: ${error.message}`;
+  });
+
+  await check("完了にすれば、また作れる", async () => {
+    const { data: one } = await userB.client
+      .from("todos").select("id").eq("user_id", userB.id)
+      .neq("status", "done").limit(1).single();
+
+    const { error: doneError } = await userB.client
+      .from("todos")
+      .update({ status: "done", completed_at: new Date().toISOString() })
+      .eq("id", one.id);
+    assert(!doneError, `完了にできませんでした: ${doneError?.message}`);
+
+    const { error } = await userB.client
+      .from("todos")
+      .insert({ user_id: userB.id, title: "枠が空いたので追加" });
+    assert(!error, `枠が空いたのに作成できません: ${error?.message}`);
+
+    return "1件完了させたら1件追加できた";
+  });
+
+  await check("完了済みを未完了へ戻すのも上限で止まる", async () => {
+    const { data: done } = await userB.client
+      .from("todos").select("id").eq("user_id", userB.id)
+      .eq("status", "done").limit(1).single();
+
+    const { error } = await userB.client
+      .from("todos")
+      .update({ status: "open", completed_at: null })
+      .eq("id", done.id);
+
+    assert(error, "上限に達しているのに未完了へ戻せてしまいました");
+    return `戻す操作も拒否: ${error.message}`;
+  });
+
+  // -------------------------------------------------------------------------
   group("A-10 アカウント削除で作成データが消える");
   // -------------------------------------------------------------------------
   await check("削除前にユーザーAのデータを用意する", async () => {
@@ -449,4 +538,4 @@ if (failed.length > 0) {
   process.exit(1);
 }
 
-console.log("\nDB 層の受け入れ条件（A-01 / A-07 / A-09 / A-10）はすべて満たしています。");
+console.log("\nDB 層の受け入れ条件（A-01 / A-06 / A-07 / A-09 / A-10）はすべて満たしています。");

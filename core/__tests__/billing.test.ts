@@ -4,6 +4,7 @@ import {
   GRACE_DAYS,
   effectiveEntitlement,
   entitlementFromSubscription,
+  normalizeAppleStatus,
   normalizeStripeStatus,
   toSubscriptionUpdate,
 } from "../billing";
@@ -160,5 +161,33 @@ describe("planComparison（§6 の表が PLAN_LIMITS からずれない）", () 
   it("Pro 限定機能は Free 側が利用できないと出る", () => {
     expect(find("CSVエクスポート")?.free).toBe("利用できない");
     expect(find("CSVエクスポート")?.pro).toBe("利用できる");
+  });
+});
+
+describe("normalizeAppleStatus", () => {
+  it("有効な購読は active になる", () => {
+    expect(normalizeAppleStatus(1)).toBe("active");
+  });
+
+  it("決済再試行中と猶予期間は past_due になり、権限が残る", () => {
+    for (const status of [3, 4]) {
+      const mapped = normalizeAppleStatus(status);
+      expect(mapped).toBe("past_due");
+      expect(entitlementFromSubscription(mapped, null, new Date())).toBe("pro");
+    }
+  });
+
+  it("期限切れと剥奪は canceled になり、権限が外れる", () => {
+    for (const status of [2, 5]) {
+      const mapped = normalizeAppleStatus(status);
+      expect(mapped).toBe("canceled");
+      expect(entitlementFromSubscription(mapped, null, new Date())).toBe("free");
+    }
+  });
+
+  it("知らない値は null にして権限を与えない", () => {
+    expect(normalizeAppleStatus(0)).toBeNull();
+    expect(normalizeAppleStatus(99)).toBeNull();
+    expect(entitlementFromSubscription(null, null, new Date())).toBe("free");
   });
 });
